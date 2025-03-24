@@ -23,14 +23,20 @@ export default function App() {
 }
 
 const Top = styled.div`
+  width: 100%;
   margin: 0;
   background-color: #191919;
   font-family: 'Roboto', sans-serif;
   color: #fff;
   padding: 12px;
+  display: flex;
+  justify-content: center;
   text-align: center;
   font-size: 48px;
   font-weight: bold;
+    position: fixed;
+    top: 0;
+    left: 0;
 `;
 
 const Container = styled.div`
@@ -38,5 +44,9 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-around;
   height: 100vh;
-  margin: 0 23%;
+  margin: 80px 23% 0 23%;
+  color: #000;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
 `;

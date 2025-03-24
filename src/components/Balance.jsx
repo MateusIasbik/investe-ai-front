@@ -28,6 +28,7 @@ export default function Balance() {
 }
 
 const OperationsStyled = styled.div`
+    min-width: 1025px;
     display: flex;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
