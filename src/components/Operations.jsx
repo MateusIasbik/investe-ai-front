@@ -8,6 +8,8 @@ export default function Operations() {
     const [amount, setAmount] = useState("");
     const [value, setValue] = useState("");
 
+    console.log(orderType, action, amount, value);
+
     return (
         <>
             <h1>Operações</h1>
@@ -71,6 +73,7 @@ export default function Operations() {
 
 const OperationsStyled = styled.div`
     display: flex;
+    align-items: center;
     min-width: 1025px;
     min-height: 123px;
     border-radius: 10px;
@@ -80,9 +83,8 @@ const OperationsStyled = styled.div`
 const InputStyled = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    margin: 10px;
+    justify-content: space-around;
+    min-width: 100%;
     border-radius: 10px;
     border: none;
     font-size: 16px;
@@ -95,7 +97,6 @@ const InputStyled = styled.div`
         font-family: 'Roboto', sans-serif;
         font-weight: 400;
         color: #000;
-        margin: 5px 5px 5px 0;
     }
 
     select, input {
@@ -107,7 +108,7 @@ const InputStyled = styled.div`
         width: 160px;
         font-family: 'Roboto', sans-serif;
         padding: 0 11px;
-        margin: 5px 15px 5px 0;
+        margin: 10px 0 0 0;
     }
 
     button {
@@ -119,5 +120,6 @@ const InputStyled = styled.div`
         border: none;
         min-height: 60px;
         min-width: 180px;
+        margin-top: 1%;
     }
 `
