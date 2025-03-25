@@ -12,7 +12,7 @@ export default function Operations() {
 
     return (
         <>
-            <h1>Operações</h1>
+            <TitleStyled>Operações</TitleStyled>
             <OperationsStyled>
                 
                 <InputStyled>
@@ -71,6 +71,10 @@ export default function Operations() {
     )
 }
 
+const TitleStyled = styled.h1`
+    margin: 25px 0;
+`
+
 const OperationsStyled = styled.div`
     display: flex;
     align-items: center;
@@ -83,7 +87,7 @@ const OperationsStyled = styled.div`
 const InputStyled = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     min-width: 100%;
     border-radius: 10px;
     border: none;
@@ -109,6 +113,7 @@ const InputStyled = styled.div`
         font-family: 'Roboto', sans-serif;
         padding: 0 11px;
         margin: 10px 0 0 0;
+        border: 1px solid #DBDBDB;
     }
 
     button {

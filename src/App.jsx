@@ -43,7 +43,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  height: 100vh;
+  min-height: 100vh;
   margin: 80px 23% 0 23%;
   color: #000;
   font-family: 'Roboto', sans-serif;

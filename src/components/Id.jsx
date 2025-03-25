@@ -13,6 +13,7 @@ export default function Id() {
 
 const IdStyled = styled.div`
     h1 {
+        margin: 25px 0;
         color: #000000;
         font-size: 18px;
         font-family: 'Roboto', sans-serif;
