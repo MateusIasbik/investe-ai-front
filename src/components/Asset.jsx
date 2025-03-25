@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import MY_ASSETS from "../mock";
 
-export default function Asset() {
+export default function Asset({ profitOrLoss }) {
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -11,44 +10,50 @@ export default function Asset() {
         }).format(value);
     }
 
+
+
     return (
         <>
 
-            {MY_ASSETS.map((asset, index) => (
+            {profitOrLoss.map((asset, index) => (
                 <BoxStyled key={index}>
 
-                <h1>{asset.name}</h1>
+                    <h1>{asset.name}</h1>
 
-                <div>
-                    <h2>Cotação</h2>
-                    <p>{formatCurrency(asset.price)}</p>
-                </div>
+                    <div>
+                        <h2>Cotação</h2>
+                        <p>{formatCurrency(asset.price)}</p>
+                    </div>
 
-                <div>
-                    <h2>Quantidade</h2>
-                    <p>{asset.amount}</p>
-                </div>
+                    <div>
+                        <h2>Quantidade</h2>
+                        <p>{asset.amount}</p>
+                    </div>
 
-                <div>
-                    <h2>Valor Atual</h2>
-                    <p>{formatCurrency(asset.currentValue)}</p>
-                </div>
+                    <div>
+                        <h2>Valor Atual</h2>
+                        <p>{formatCurrency(asset.currentValue)}</p>
+                    </div>
 
-                <div>
-                    <h2>Valor de Aquisição</h2>
-                    <p>{formatCurrency(asset.acquisitionValue)}</p>
-                </div>
+                    <div>
+                        <h2>Valor de Aquisição</h2>
+                        <p>{formatCurrency(asset.acquisitionValue)}</p>
+                    </div>
 
-                <div>
-                    <h2>Lucro ou Prejuízo</h2>
-                    <h3>R$ 5.000,00</h3>
-                </div>
+                    <div>
+                        <h2>Lucro ou Prejuízo</h2>
+                        <h3
+                            style={{
+                                color: asset.profitOrLoss < 0 ? '#E43E3E' : '#205934'
+                            }}
+                        >{formatCurrency(Math.abs(asset.profitOrLoss))}</h3>
+                    </div>
 
-            </BoxStyled>
+                </BoxStyled>
 
             ))}
 
-                
+
         </>
     )
 }
