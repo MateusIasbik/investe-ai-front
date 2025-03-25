@@ -5,8 +5,10 @@ import Balance from "./components/Balance";
 import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
+import MY_ASSETS from "./mock";
 
 export default function App() {
+  
   return (
     <>
       <Top>Investe Aí</Top>
@@ -16,7 +18,7 @@ export default function App() {
         <Balance/>
         <Operations/>
         <Diversification/>
-        <Assets/>
+        <Assets MY_ASSETS={MY_ASSETS}/>
       </Container>
     </>
   )

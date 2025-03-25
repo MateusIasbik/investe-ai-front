@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import Asset from "../components/Asset";
-import MY_ASSETS from "../mock";
 
-export default function Assets() {
+export default function Assets( {MY_ASSETS} ) {
 
-    const profitOrLoss = MY_ASSETS.map((asset) => {
+    const assetsWithProfitOrLoss = MY_ASSETS.map((asset) => {
         const resultProfitOrLoss = asset.currentValue - asset.acquisitionValue;
         
         const newAssets = {
@@ -16,15 +15,12 @@ export default function Assets() {
         return newAssets;
     });
 
-    console.log(profitOrLoss);
-
-
     return (
         <>
 
             <TitleStyled>Ativos</TitleStyled>
 
-            <Asset profitOrLoss={profitOrLoss}/>
+            <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss}/>
 
                 
         </>

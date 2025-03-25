@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function Asset({ profitOrLoss }) {
+export default function Asset( {assetsWithProfitOrLoss} ) {
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -10,13 +10,11 @@ export default function Asset({ profitOrLoss }) {
         }).format(value);
     }
 
-
-
     return (
         <>
 
-            {profitOrLoss.map((asset, index) => (
-                <BoxStyled key={index}>
+            {assetsWithProfitOrLoss.map((asset) => (
+                <BoxStyled key={asset.id}>
 
                     <h1>{asset.name}</h1>
 
