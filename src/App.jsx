@@ -17,7 +17,7 @@ export default function App() {
         <Id/>
         <Balance MY_ASSETS={MY_ASSETS}/>
         <Operations/>
-        <Diversification/>
+        <Diversification MY_ASSETS={MY_ASSETS}/>
         <Assets MY_ASSETS={MY_ASSETS}/>
       </Container>
     </>
