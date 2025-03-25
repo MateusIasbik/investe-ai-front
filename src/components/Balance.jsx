@@ -1,10 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function Balance() {
+export default function Balance( {MY_ASSETS}) {
+
+    const investmentEquity = MY_ASSETS.reduce((acc, asset) => {
+        return acc + asset.currentValue;
+    }, 0);
 
     const balanceDisponible = 287.83;
-    const soma = 250000.00;
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -21,7 +24,7 @@ export default function Balance() {
             </BoxStyled>
             <BoxStyled>
                 <h1>Patrimônio de investimentos</h1>
-                <h3>{formatCurrency(soma)}</h3>
+                <h3>{formatCurrency(investmentEquity)}</h3>
             </BoxStyled>
         </OperationsStyled>
     )
