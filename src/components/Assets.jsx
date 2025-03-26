@@ -17,16 +17,15 @@ export default function Assets( {MY_ASSETS} ) {
 
     return (
         <>
-
             <TitleStyled>Ativos</TitleStyled>
 
-            <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss}/>
-
-                
+            <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss}/>              
         </>
     )
 }
 
 const TitleStyled = styled.h1`
-    margin: 25px 0;
+    border-top: 1px solid #DEDEDF;
+    padding-top: 50px;
+    margin: 35px 0;
 `

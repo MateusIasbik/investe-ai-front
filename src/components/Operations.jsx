@@ -72,7 +72,7 @@ export default function Operations() {
 }
 
 const TitleStyled = styled.h1`
-    margin: 25px 0;
+    margin: 35px 0;
 `
 
 const OperationsStyled = styled.div`
