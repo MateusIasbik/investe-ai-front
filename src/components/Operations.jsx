@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Operations() {
 
@@ -9,7 +9,7 @@ export default function Operations() {
     const [action, setAction] = useState("");
     const [amount, setAmount] = useState("");
     const [value, setValue] = useState("");
-    const [contributionValue, setContributionValue] = useState(null);
+    const [contributionValue, setContributionValue] = useState(null); //VALOR DEVE SER ENVIADO PARA O BANCO DE DADOS
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -35,7 +35,7 @@ export default function Operations() {
 
         const contribValue = contribution();
 
-        if (contribValue) { 
+        if (contribValue) {
             setContributionValue(contribValue);
             console.log("O aporte foi realizado com sucesso!", contribValue);
         }
@@ -100,7 +100,14 @@ export default function Operations() {
 
             </OperationsStyled>
 
-            <ToastContainer />
+            <ToastContainer style={{fontSize: 14, color: '#CCC', padding: '80px 10px'}} 
+            toastStyle={{
+                lineHeight: "1.4",
+                backgroundColor: '#333',
+                color: '#fff'
+            }}
+        
+            />
         </>
     )
 }
