@@ -28,4 +28,5 @@ const TitleStyled = styled.h1`
     border-top: 1px solid #DEDEDF;
     padding-top: 50px;
     margin: 35px 0;
+    min-width: 1025px;
 `

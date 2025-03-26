@@ -7,7 +7,7 @@ export default function Balance( {MY_ASSETS}) {
         return acc + asset.currentValue;
     }, 0);
 
-    const balanceDisponible = 287.83; //VALOR DEVE SER OBITIDO DO BANCO DE DADOS
+    const balanceDisponible = 287.83; //VALOR DEVE SER OBTIDO DO BANCO DE DADOS
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {

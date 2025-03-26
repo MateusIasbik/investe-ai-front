@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
 
-export default function Operations() {
+export default function Operations({ MY_ASSETS }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
@@ -11,6 +12,7 @@ export default function Operations() {
     const [value, setValue] = useState("");
     const [contributionValue, setContributionValue] = useState(null); //VALOR DEVE SER ENVIADO PARA O BANCO DE DADOS
 
+    
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -24,7 +26,7 @@ export default function Operations() {
         if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
             toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
             return numericValue;
-        } else {
+        } else if (orderType === "Aporte" && numericValue > 10000) {
             toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
             return null;
         }
@@ -39,6 +41,24 @@ export default function Operations() {
             setContributionValue(contribValue);
             console.log("O aporte foi realizado com sucesso!", contribValue);
         }
+
+        if(action !== ""){
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+                .then((response) => {
+                    const data = response.data.results[0].regularMarketPrice;
+                    if (data === undefined) {
+                        toast.error("O ativo digitado não existe, tente novamente!");
+                        console.error("Ação não encontrada!");
+                        return;
+                    }
+                    toast.success(`O aporte de ${action} no valor total de ${formatCurrency(amount * value)} foi realizado com sucesso!`);
+                    console.log(`O valor da ação ${action} é ${data}`);
+                })
+                .catch((error) => {
+                    console.error("Erro ao buscar o banco de dados!", error);
+                });
+        }
+
     };
 
     return (
@@ -100,13 +120,13 @@ export default function Operations() {
 
             </OperationsStyled>
 
-            <ToastContainer style={{fontSize: 14, color: '#CCC', padding: '80px 10px'}} 
-            toastStyle={{
-                lineHeight: "1.4",
-                backgroundColor: '#333',
-                color: '#fff'
-            }}
-        
+            <ToastContainer style={{ fontSize: 14, color: '#CCC', padding: '80px 10px' }}
+                toastStyle={{
+                    lineHeight: "1.4",
+                    backgroundColor: '#333',
+                    color: '#fff'
+                }}
+
             />
         </>
     )
