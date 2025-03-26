@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 export default function Operations() {
 
@@ -7,14 +9,43 @@ export default function Operations() {
     const [action, setAction] = useState("");
     const [amount, setAmount] = useState("");
     const [value, setValue] = useState("");
+    const [contributionValue, setContributionValue] = useState(null);
 
-    console.log(orderType, action, amount, value);
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+        }).format(value);
+    }
+
+    function contribution() {
+        const numericValue = parseFloat(value);
+
+        if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
+            toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
+            return numericValue;
+        } else {
+            toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
+            return null;
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const contribValue = contribution();
+
+        if (contribValue) { 
+            setContributionValue(contribValue);
+            console.log("O aporte foi realizado com sucesso!", contribValue);
+        }
+    };
 
     return (
         <>
             <TitleStyled>Operações</TitleStyled>
             <OperationsStyled>
-                
+
                 <InputStyled>
                     <div>
                         <h2 htmlFor="name">Tipo de ordem</h2>
@@ -24,6 +55,7 @@ export default function Operations() {
                             value={orderType}
                             onChange={e => setOrderType(e.target.value)}
                         >
+                            <option value="Aporte">Aporte</option>
                             <option value="Compra">Compra</option>
                             <option value="Venda">Venda</option>
                         </select>
@@ -50,7 +82,7 @@ export default function Operations() {
                             onChange={e => setAmount(e.target.value)}
                         />
                     </div>
-                    
+
                     <div>
                         <h2 htmlFor="name">Valor</h2>
                         <input
@@ -62,11 +94,13 @@ export default function Operations() {
                         />
                     </div>
 
-                    <button type="submit">Registrar</button>
+                    <button onClick={handleSubmit} type="submit">Registrar</button>
 
                 </InputStyled>
 
             </OperationsStyled>
+
+            <ToastContainer />
         </>
     )
 }
