@@ -1,13 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function Balance( {sortedData}) {
+export default function Balance( {sortedData, MY_MONEY}) {
 
     const investmentEquity = sortedData.reduce((acc, asset) => {
         return acc + asset.currentValue;
     }, 0);
-
-    const balanceDisponible = 287.83; //VALOR DEVE SER OBTIDO DO BANCO DE DADOS
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -20,7 +18,7 @@ export default function Balance( {sortedData}) {
         <OperationsStyled>
             <BoxStyled>
                 <h1>Disponível para investir</h1>
-                <h2>{formatCurrency(balanceDisponible)}</h2>
+                <h2>{formatCurrency(MY_MONEY)}</h2>
             </BoxStyled>
             <BoxStyled>
                 <h1>Patrimônio de investimentos</h1>

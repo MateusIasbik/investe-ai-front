@@ -1,16 +1,15 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
-export default function Operations({ sortedData }) {
+export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
     const [amount, setAmount] = useState("100");
     const [value, setValue] = useState("");
-    const [contributionValue, setContributionValue] = useState(null); //VALOR DEVE SER ENVIADO PARA O BANCO DE DADOS
     const [placeholder, setPlaceholder] = useState("");
 
     const formatCurrency = (value) => {
@@ -20,26 +19,13 @@ export default function Operations({ sortedData }) {
         }).format(value);
     }
 
-    function contribution() {
-        const numericValue = parseFloat(value);
-
-        if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
-            toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
-            return numericValue;
-        } else if (orderType === "Aporte" && numericValue > 10000) {
-            toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
-            return null;
-        }
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const contribValue = contribution();
 
-        if (contribValue) {
-            setContributionValue(contribValue);
-            console.log("O aporte foi realizado com sucesso!", contribValue);
+        if (orderType === "Aporte" && contribValue) {
+            updateMyMoney(MY_MONEY + contribValue);
         }
 
         if (action !== "") {
@@ -60,6 +46,18 @@ export default function Operations({ sortedData }) {
         }
 
     };
+
+    function contribution() {
+        const numericValue = parseFloat(value);
+
+        if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
+            toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
+            return numericValue;
+        } else if (orderType === "Aporte" && numericValue > 10000) {
+            toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
+            return null;
+        }
+    }
 
     useEffect(() => {
 

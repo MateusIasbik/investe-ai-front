@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Id from "./components/Id";
 import Balance from "./components/Balance";
 import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
-import MY_ASSETS from "./mock";
+import { MY_ASSETS, MY_MONEY } from './mock';
 
 export default function App() {
 
@@ -18,6 +18,13 @@ export default function App() {
     }
     return 0;
   });
+
+  const [myMoney, setMyMoney] = useState(MY_MONEY);
+
+  // Função para atualizar MY_MONEY
+  const updateMyMoney = (newAmount) => {
+    setMyMoney(newAmount);
+  };
   
   return (
     <>
@@ -25,8 +32,8 @@ export default function App() {
       
       <Container>
         <Id/>
-        <Balance sortedData={sortedData}/>
-        <Operations sortedData={sortedData}/>
+        <Balance sortedData={sortedData} MY_MONEY={myMoney} />
+        <Operations sortedData={sortedData} MY_MONEY={myMoney} updateMyMoney={updateMyMoney}/>
         <Diversification sortedData={sortedData}/>
         <Assets sortedData={sortedData}/>
       </Container>

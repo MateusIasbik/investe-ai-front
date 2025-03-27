@@ -11,4 +11,6 @@ const MY_ASSETS = [
     {id: 10, name: "WEGE3", price: 100, amount: 100, currentValue: 25000, acquisitionValue: 30000}
 ];
 
-export default MY_ASSETS;
+const MY_MONEY = 0;
+
+export { MY_ASSETS, MY_MONEY };
