@@ -8,7 +8,7 @@ export default function Operations({ sortedData }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
-    const [amount, setAmount] = useState("1");
+    const [amount, setAmount] = useState("100");
     const [value, setValue] = useState("");
     const [contributionValue, setContributionValue] = useState(null); //VALOR DEVE SER ENVIADO PARA O BANCO DE DADOS
     const [placeholder, setPlaceholder] = useState("");
@@ -63,12 +63,20 @@ export default function Operations({ sortedData }) {
 
     useEffect(() => {
 
-        if (action.length !== 5) {
+        if (orderType === "Aporte") {
             setValue("");
+            setPlaceholder("R$ 0,00");
+            setAmount("");
+            setAction("");
+        }
+
+        if (orderType !== "Aporte" && action.length !== 5) {
+            setValue("");
+            setAmount("100");
             setPlaceholder("");
         }
 
-        if (action !== "" && action.length === 5) {
+        if (orderType !== "Aporte" && action !== "" && action.length === 5) {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
                     const data = response.data.results[0].regularMarketPrice;
@@ -86,7 +94,7 @@ export default function Operations({ sortedData }) {
                 });
 
         }
-    }, [action, amount]);
+    }, [action, amount, orderType]);
 
     return (
         <>
