@@ -26,6 +26,7 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
 
         if (orderType === "Aporte" && contribValue) {
             updateMyMoney(MY_MONEY + contribValue);
+            setValue("");
         }
 
         if (action !== "") {
@@ -37,7 +38,9 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
                         console.error("Ação não encontrada!");
                         return;
                     }
-                    toast.success(`O aporte de ${action} no valor total de ${formatCurrency(amount * value)} foi realizado com sucesso!`);
+
+                    console.log(response.data.results[0]);
+                    toast.success(`O aporte de ${action} no valor total de ${formatCurrency(data * amount)} foi realizado com sucesso!`);
                     console.log(`O valor da ação ${action} é ${data}`);
                 })
                 .catch((error) => {
@@ -48,7 +51,7 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
     };
 
     function contribution() {
-        const numericValue = parseFloat(value);
+        const numericValue = parseFloat(value.replace(",", "."));
 
         if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
             toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
@@ -93,6 +96,12 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
 
         }
     }, [action, amount, orderType]);
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit(e);
+        }
+    };
 
     return (
         <>
@@ -144,6 +153,7 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
                             placeholder={placeholder}
                             value={value}
                             onChange={e => setValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
                         />
                     </div>
 
