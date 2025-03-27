@@ -8,7 +8,7 @@ export default function Operations({ sortedData }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
-    const [amount, setAmount] = useState("");
+    const [amount, setAmount] = useState("1");
     const [value, setValue] = useState("");
     const [contributionValue, setContributionValue] = useState(null); //VALOR DEVE SER ENVIADO PARA O BANCO DE DADOS
     const [placeholder, setPlaceholder] = useState("");
@@ -73,7 +73,8 @@ export default function Operations({ sortedData }) {
                 .then((response) => {
                     const data = response.data.results[0].regularMarketPrice;
                     if (data) {
-                        setValue(data);
+                        const numericValue = formatCurrency(amount * data);
+                        setValue(numericValue);
                     } else {
                         setValue("R$ 0,00");
                         setPlaceholder("");
@@ -85,7 +86,7 @@ export default function Operations({ sortedData }) {
                 });
 
         }
-    }, [action]);
+    }, [action, amount]);
 
     return (
         <>
@@ -123,7 +124,7 @@ export default function Operations({ sortedData }) {
                         <input
                             type="number"
                             id="amount"
-                            placeholder="100"
+                            placeholder={amount}
                             value={amount}
                             onChange={e => setAmount(e.target.value)}
                         />
