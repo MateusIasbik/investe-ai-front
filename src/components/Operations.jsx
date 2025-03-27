@@ -4,15 +4,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
-export default function Operations({ MY_ASSETS }) {
+export default function Operations({ sortedData }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
     const [amount, setAmount] = useState("");
     const [value, setValue] = useState("");
     const [contributionValue, setContributionValue] = useState(null); //VALOR DEVE SER ENVIADO PARA O BANCO DE DADOS
+    const [placeholder, setPlaceholder] = useState("");
 
-    
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -42,7 +42,7 @@ export default function Operations({ MY_ASSETS }) {
             console.log("O aporte foi realizado com sucesso!", contribValue);
         }
 
-        if(action !== ""){
+        if (action !== "") {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
                     const data = response.data.results[0].regularMarketPrice;
@@ -60,6 +60,32 @@ export default function Operations({ MY_ASSETS }) {
         }
 
     };
+
+    useEffect(() => {
+
+        if (action.length !== 5) {
+            setValue("");
+            setPlaceholder("");
+        }
+
+        if (action !== "" && action.length === 5) {
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+                .then((response) => {
+                    const data = response.data.results[0].regularMarketPrice;
+                    if (data) {
+                        setValue(data);
+                    } else {
+                        setValue("R$ 0,00");
+                        setPlaceholder("");
+                    }
+                })
+                .catch((error) => {
+                    toast.error("O ativo digitado não existe, tente novamente!");
+                    setValue("");
+                });
+
+        }
+    }, [action]);
 
     return (
         <>
@@ -108,7 +134,7 @@ export default function Operations({ MY_ASSETS }) {
                         <input
                             type="value"
                             id="value"
-                            placeholder="R$0,00"
+                            placeholder={placeholder}
                             value={value}
                             onChange={e => setValue(e.target.value)}
                         />

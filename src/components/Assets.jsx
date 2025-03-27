@@ -2,9 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import Asset from "../components/Asset";
 
-export default function Assets( {MY_ASSETS} ) {
+export default function Assets( {sortedData} ) {
 
-    const assetsWithProfitOrLoss = MY_ASSETS.map((asset) => {
+    const assetsWithProfitOrLoss = sortedData.map((asset) => {
         const resultProfitOrLoss = asset.currentValue - asset.acquisitionValue;
         
         const newAssets = {

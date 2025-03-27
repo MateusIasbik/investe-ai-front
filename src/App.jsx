@@ -8,6 +8,16 @@ import Assets from "./components/Assets";
 import MY_ASSETS from "./mock";
 
 export default function App() {
+
+  const sortedData = MY_ASSETS.sort((a, b) => {
+    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+      return -1;
+    }
+    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+      return 1;
+    }
+    return 0;
+  });
   
   return (
     <>
@@ -15,10 +25,10 @@ export default function App() {
       
       <Container>
         <Id/>
-        <Balance MY_ASSETS={MY_ASSETS}/>
-        <Operations MY_ASSETS={MY_ASSETS}/>
-        <Diversification MY_ASSETS={MY_ASSETS}/>
-        <Assets MY_ASSETS={MY_ASSETS}/>
+        <Balance sortedData={sortedData}/>
+        <Operations sortedData={sortedData}/>
+        <Diversification sortedData={sortedData}/>
+        <Assets sortedData={sortedData}/>
       </Container>
     </>
   )

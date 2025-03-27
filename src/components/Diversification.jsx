@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
-export default function Diversification({ MY_ASSETS }) {
+export default function Diversification({ sortedData }) {
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-    const totalAmount = MY_ASSETS.reduce((acc, asset) => acc + asset.amount, 0);
+    const totalAmount = sortedData.reduce((acc, asset) => acc + asset.amount, 0);
 
-    const data = MY_ASSETS.map((asset) => {
+    const data = sortedData.map((asset) => {
 
         const percentage = (asset.amount / totalAmount) * 100;
 

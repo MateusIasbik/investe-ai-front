@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function Balance( {MY_ASSETS}) {
+export default function Balance( {sortedData}) {
 
-    const investmentEquity = MY_ASSETS.reduce((acc, asset) => {
+    const investmentEquity = sortedData.reduce((acc, asset) => {
         return acc + asset.currentValue;
     }, 0);
 
