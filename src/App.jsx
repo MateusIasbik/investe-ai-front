@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Id from "./components/Id";
 import Balance from "./components/Balance";
@@ -9,7 +9,18 @@ import { MY_ASSETS, MY_MONEY } from './mock';
 
 export default function App() {
 
-  const sortedData = MY_ASSETS.sort((a, b) => {
+  const [myMoney, setMyMoney] = useState(MY_MONEY);
+  const [myAssets, setMyAssets] = useState(MY_ASSETS);
+
+  const updateMyMoney = (newAmount) => {
+    setMyMoney(newAmount);
+  };
+
+  const updateMyAssets = (newAssets) => {
+    setMyAssets(newAssets);
+  };
+
+  const sortedData = [...myAssets].sort((a, b) => {
     if (a.name.toLowerCase() < b.name.toLowerCase()) {
       return -1;
     }
@@ -19,23 +30,16 @@ export default function App() {
     return 0;
   });
 
-  const [myMoney, setMyMoney] = useState(MY_MONEY);
-
-  // Função para atualizar MY_MONEY
-  const updateMyMoney = (newAmount) => {
-    setMyMoney(newAmount);
-  };
-  
   return (
     <>
       <Top>Investe Aí</Top>
-      
+
       <Container>
-        <Id/>
+        <Id />
         <Balance sortedData={sortedData} MY_MONEY={myMoney} />
-        <Operations sortedData={sortedData} MY_MONEY={myMoney} updateMyMoney={updateMyMoney}/>
-        <Diversification sortedData={sortedData}/>
-        <Assets sortedData={sortedData}/>
+        <Operations MY_MONEY={myMoney} sortedData={sortedData} updateMyMoney={updateMyMoney} updateMyAssets={updateMyAssets} />
+        <Diversification sortedData={sortedData} />
+        <Assets sortedData={sortedData} />
       </Container>
     </>
   )

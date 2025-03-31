@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import Asset from "../components/Asset";
 
-export default function Assets( {sortedData} ) {
+export default function Assets({ sortedData }) {
 
     const assetsWithProfitOrLoss = sortedData.map((asset) => {
         const resultProfitOrLoss = asset.currentValue - asset.acquisitionValue;
-        
+
         const newAssets = {
             ...asset,
             profitOrLoss: resultProfitOrLoss
@@ -19,7 +19,7 @@ export default function Assets( {sortedData} ) {
         <>
             <TitleStyled>Ativos</TitleStyled>
 
-            <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss}/>              
+            <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss} />
         </>
     )
 }

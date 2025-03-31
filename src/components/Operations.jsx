@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
-export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
+export default function Operations({ MY_MONEY, sortedData, updateMyMoney, updateMyAssets }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
@@ -22,11 +22,78 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        const cleanCurrency = (currencyString) => {
+            return parseFloat(currencyString.replace("R$", "").replace(".", "").replace(",", "."));
+        };
+
         const contribValue = contribution();
 
-        if (orderType === "Aporte" && contribValue) {
+        if (orderType === "Aporte" && contribValue !== undefined) {
             updateMyMoney(MY_MONEY + contribValue);
             setValue("");
+        } else if (orderType === "Aporte" && contribValue === undefined) {
+            toast.error("O valor digitado está incorreto. Tente novamente!");
+        }
+
+        if (orderType === "Compra" && value && amount && action) {
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+                .then((response) => {
+                    const lastID = sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO
+                    const correctName = response.data.results[0].symbol;
+                    const data = Number(response.data.results[0].regularMarketPrice);
+                    const acquisitionValue = cleanCurrency(value);
+                    const currentValueNumber = data * amount;
+
+                    const newAction = {
+                        id: lastID,
+                        name: correctName,
+                        price: data,
+                        amount: Number(amount),
+                        currentValue: currentValueNumber,
+                        acquisitionValue: acquisitionValue
+                    }
+
+                    console.log("MINHA NOVA AÇÃO É:", newAction);
+
+                    if (!sortedData.includes(correctName)) {
+                        updateMyAssets([...sortedData, newAction]);
+
+                        setValue("");
+                        setAmount("100");
+                        setAction("");
+                    } else {
+                        const updatedAssets = sortedData.map((item) => {
+                            if (item.name === correctName) {
+                                const previousAmount = parseInt(item.amount);
+                                const previousAcquisitionValue = parseFloat(item.acquisitionValue.replace("R$", "").replace(",", "."));
+                                const newAmount = parseInt(amount);
+                                const newAcquisitionValue = parseFloat(value.replace("R$", "").replace(",", "."));
+
+                                const totalAmount = previousAmount + newAmount;
+                                const totalValue = (previousAcquisitionValue * previousAmount) + (newAcquisitionValue * newAmount);
+                                const newAverageValue = totalValue / totalAmount;
+
+                                return {
+                                    ...item,
+                                    amount: totalAmount.toString(),
+                                    acquisitionValue: formatCurrency(newAverageValue),
+                                    currentValue: formatCurrency(newAverageValue * totalAmount) 
+                                };
+                            }
+                            return item;
+                        });
+
+                        updateMyAssets(updatedAssets);
+
+                        setValue("");
+                        setAmount("100");
+                        setAction("");
+                    }
+                })
+
+                .catch((error) => {
+                    console.error("Erro ao buscar o banco de dados!", error);
+                });
         }
 
         if (action !== "") {
@@ -35,13 +102,11 @@ export default function Operations({ sortedData, MY_MONEY, updateMyMoney }) {
                     const data = response.data.results[0].regularMarketPrice;
                     if (data === undefined) {
                         toast.error("O ativo digitado não existe, tente novamente!");
-                        console.error("Ação não encontrada!");
                         return;
                     }
 
-                    console.log(response.data.results[0]);
+                    // console.log(response.data.results[0]);
                     toast.success(`O aporte de ${action} no valor total de ${formatCurrency(data * amount)} foi realizado com sucesso!`);
-                    console.log(`O valor da ação ${action} é ${data}`);
                 })
                 .catch((error) => {
                     console.error("Erro ao buscar o banco de dados!", error);
