@@ -23,8 +23,10 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         e.preventDefault();
 
         const cleanCurrency = (currencyString) => {
-            return parseFloat(currencyString.replace("R$", "").replace(".", "").replace(",", "."));
+            const str = String(currencyString);
+            return parseFloat(str.replace("R$", "").replace(/\./g, "").replace(",", "."));
         };
+
 
         const contribValue = contribution();
 
@@ -53,41 +55,45 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         acquisitionValue: acquisitionValue
                     }
 
-                    console.log("MINHA NOVA AÇÃO É:", newAction);
+                    console.log("MINHA NOVA AÇÃO É:", newAction); //CONSOLE AQUI
 
-                    if (!sortedData.includes(correctName)) {
+                    if (!sortedData.some(item => item.name === correctName)) {
                         updateMyAssets([...sortedData, newAction]);
 
                         setValue("");
                         setAmount("100");
                         setAction("");
                     } else {
-                        const updatedAssets = sortedData.map((item) => {
-                            if (item.name === correctName) {
-                                const previousAmount = parseInt(item.amount);
-                                const previousAcquisitionValue = parseFloat(item.acquisitionValue.replace("R$", "").replace(",", "."));
-                                const newAmount = parseInt(amount);
-                                const newAcquisitionValue = parseFloat(value.replace("R$", "").replace(",", "."));
+                        console.log("ENTROU AQUIIIIIIIIIIIII e meu banco dados é ", sortedData);
 
-                                const totalAmount = previousAmount + newAmount;
-                                const totalValue = (previousAcquisitionValue * previousAmount) + (newAcquisitionValue * newAmount);
-                                const newAverageValue = totalValue / totalAmount;
+
+                        const newData = sortedData.map(item => {
+                            if (item.name === correctName) {
+
+                                console.log(`Price seria ${(item.price + cleanCurrency(value)) / (item.amount + Number(amount))}
+                                    Amount seria ${Number(item.amount) + Number(amount)},
+                                    CurrentValue seria ${data * (Number(item.amount) + Number(amount))},
+                                    AcquisitionValue seria ${cleanCurrency(item.currentValue) + cleanCurrency(value)}
+                                `);
 
                                 return {
                                     ...item,
-                                    amount: totalAmount.toString(),
-                                    acquisitionValue: formatCurrency(newAverageValue),
-                                    currentValue: formatCurrency(newAverageValue * totalAmount) 
-                                };
+                                    amount: Number(item.amount) + Number(amount),
+                                    currentValue: (data * (Number(item.amount) + Number(amount))),
+                                    acquisitionValue: cleanCurrency(item.currentValue) + cleanCurrency(value)
+                                }
                             }
-                            return item;
-                        });
 
-                        updateMyAssets(updatedAssets);
+                            return item;
+
+                        })
+
+                        updateMyAssets(newData);
 
                         setValue("");
                         setAmount("100");
                         setAction("");
+
                     }
                 })
 

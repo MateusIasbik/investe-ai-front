@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function Asset( {assetsWithProfitOrLoss} ) {
+export default function Asset({ assetsWithProfitOrLoss }) {
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
