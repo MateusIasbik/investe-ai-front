@@ -37,10 +37,15 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
             toast.error("O valor digitado está incorreto. Tente novamente!");
         }
 
+        if (orderType === "Compra" && cleanCurrency(value) > MY_MONEY) {
+            toast.error("Não há saldo suficiente, faça um aporte superior ao valor da compra!");
+            return;
+        }
+
         if (orderType === "Compra" && value && amount && action) {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
-                    const lastID = sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO
+                    const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO
                     const correctName = response.data.results[0].symbol;
                     const data = Number(response.data.results[0].regularMarketPrice);
                     const acquisitionValue = cleanCurrency(value);
@@ -55,32 +60,22 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         acquisitionValue: acquisitionValue
                     }
 
-                    console.log("MINHA NOVA AÇÃO É:", newAction); //CONSOLE AQUI
-
                     if (!sortedData.some(item => item.name === correctName)) {
                         updateMyAssets([...sortedData, newAction]);
 
                         setValue("");
                         setAmount("100");
                         setAction("");
+                        updateMyMoney(MY_MONEY - cleanCurrency(value));
                     } else {
-                        console.log("ENTROU AQUIIIIIIIIIIIII e meu banco dados é ", sortedData);
-
-
                         const newData = sortedData.map(item => {
                             if (item.name === correctName) {
-
-                                console.log(`Price seria ${(item.price + cleanCurrency(value)) / (item.amount + Number(amount))}
-                                    Amount seria ${Number(item.amount) + Number(amount)},
-                                    CurrentValue seria ${data * (Number(item.amount) + Number(amount))},
-                                    AcquisitionValue seria ${cleanCurrency(item.currentValue) + cleanCurrency(value)}
-                                `);
 
                                 return {
                                     ...item,
                                     amount: Number(item.amount) + Number(amount),
                                     currentValue: (data * (Number(item.amount) + Number(amount))),
-                                    acquisitionValue: cleanCurrency(item.currentValue) + cleanCurrency(value)
+                                    acquisitionValue: cleanCurrency(item.acquisitionValue) + cleanCurrency(value)
                                 }
                             }
 
@@ -93,6 +88,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         setValue("");
                         setAmount("100");
                         setAction("");
+                        updateMyMoney(MY_MONEY - cleanCurrency(value));
 
                     }
                 })
@@ -110,8 +106,6 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         toast.error("O ativo digitado não existe, tente novamente!");
                         return;
                     }
-
-                    // console.log(response.data.results[0]);
                     toast.success(`O aporte de ${action} no valor total de ${formatCurrency(data * amount)} foi realizado com sucesso!`);
                 })
                 .catch((error) => {
