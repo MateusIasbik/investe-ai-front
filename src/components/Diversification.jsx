@@ -6,11 +6,11 @@ export default function Diversification({ sortedData }) {
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-    const totalAmount = sortedData.reduce((acc, asset) => acc + asset.amount, 0);
+    const totalAmount = sortedData.reduce((acc, asset) => acc + asset.currentValue, 0);
 
     const data = sortedData.map((asset) => {
 
-        const percentage = (asset.amount / totalAmount) * 100;
+        const percentage = (asset.currentValue / totalAmount) * 100;
 
         return {
             name: asset.name,
