@@ -106,19 +106,22 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                     const updatedAssets = sortedData.map(act => {
                         if (act.name === action) {
+
                             if (act.amount < amount) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
                                 return act;
                             }
+
                             const updateAction = {
                                 ...act,
                                 amount: act.amount - Number(amount),
                                 currentValue: currentValueNumber,
-                                acquisitionValue: act.acquisitionValue - currentValueNumber
+                                acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
                             };
 
                             return updateAction;
                         }
+                        
                         return act;
                     });
 
