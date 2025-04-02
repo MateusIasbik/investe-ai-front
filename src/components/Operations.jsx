@@ -27,7 +27,6 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
             return parseFloat(str.replace("R$", "").replace(/\./g, "").replace(",", "."));
         };
 
-
         const contribValue = contribution();
 
         if (orderType === "Aporte" && contribValue !== undefined) {
@@ -52,7 +51,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                     const currentValueNumber = data * amount;
 
                     const newAction = {
-                        id: lastID,
+                        id: lastID, //VERIFICAR ID
                         name: correctName,
                         price: data,
                         amount: Number(amount),
@@ -98,7 +97,51 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                 });
         }
 
-        if (action !== "") {
+        if (orderType === "Venda" && value && amount && action) {
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+                .then((response) => {
+                    const data = Number(response.data.results[0].regularMarketPrice);
+                    const acquisitionValue = cleanCurrency(value);
+                    const currentValueNumber = data * amount;
+
+                    const updatedAssets = sortedData.map(act => {
+                        if (act.name === action) {
+                            if (act.amount < amount) {
+                                toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
+                                return act;
+                            }
+                            const updateAction = {
+                                ...act,
+                                amount: act.amount - Number(amount),
+                                currentValue: currentValueNumber,
+                                acquisitionValue: act.acquisitionValue - currentValueNumber
+                            };
+
+                            return updateAction;
+                        }
+                        return act;
+                    });
+
+                    updateMyAssets(updatedAssets);
+
+                    setValue("");
+                    setAmount("100");
+                    setAction("");
+                    updateMyMoney(MY_MONEY + currentValueNumber);
+
+                    toast.success(`A venda de ${amount} ações de ${action} foi realizada com sucesso!`);
+
+                })
+
+
+
+                .catch((error) => {
+                    console.error("Erro ao buscar o banco de dados!", error);
+                });
+
+        }
+
+        if (orderType === "Aporte" && action !== "") {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
                     const data = response.data.results[0].regularMarketPrice;
@@ -241,6 +284,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 }
 
 const TitleStyled = styled.h1`
+    width: 1025px;
     margin: 35px 0;
 `
 
