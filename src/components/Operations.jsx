@@ -119,13 +119,19 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                                 acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
                             };
 
+                            if (updateAction.amount === 0) {
+                                return null;
+                            }
+
                             return updateAction;
                         }
                         
                         return act;
                     });
 
-                    updateMyAssets(updatedAssets);
+                    const filteredAssets = updatedAssets.filter(item => item !== null);
+
+                    updateMyAssets(filteredAssets);
 
                     setValue("");
                     setAmount("100");
