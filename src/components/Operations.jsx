@@ -34,19 +34,18 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
             setAction("");
         }
 
-        if (orderType !== "Aporte" && (action.length > 6)) {
+        if (orderType !== "Aporte" && (action.length > 6 || action.length < 5)) {
             setValue("");
             setAmount("100");
             setPlaceholder("");
         }
 
-        if (orderType !== "Aporte" && action.length >= 5) {
+        if (orderType !== "Aporte" && (action.length >= 5)) {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
-                .then((response) => {
+            .then((response) => {
                     const priceNow = response.data.results[0].regularMarketPrice;
                     if (priceNow) {
                         const numericValue = formatCurrency(amount * priceNow);
-                        setAmount("100");
                         setValue(numericValue);
                     } else {
                         setValue("R$ 0,00");
@@ -110,7 +109,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         updateMyAssets([...sortedData, newAction]);
 
                         setValue("");
-                        setAmount("100");
+                        // setAmount("100");
                         setAction("");
                         updateMyMoney(MY_MONEY - cleanCurrency(value));
 
@@ -134,7 +133,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         updateMyAssets(newData);
 
                         setValue("");
-                        setAmount("100");
+                        // setAmount("100");
                         setAction("");
                         updateMyMoney(MY_MONEY - cleanCurrency(value));
 
@@ -158,9 +157,9 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         return;
                     }
 
-                    if (actionExists) {
-                        console.log("Ação existe sim!");
-                    }
+                    // if (actionExists) {
+                    //     console.log("Ação existe sim!");
+                    // }
 
                     const updatedAssets = sortedData.map(act => {
                         if (act.name.toUpperCase() === action.toUpperCase()) {
