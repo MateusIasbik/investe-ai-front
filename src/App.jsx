@@ -33,7 +33,7 @@ export default function App() {
 
   useEffect(() => {
     sortedData.forEach(asset => {
-      axios.get(`/api/quote?action=${asset.name}`)
+      axios.get(`https://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`)
         .then((response) => {
           const priceNow = Number(response.data.results[0].regularMarketPrice);
           setMyAssets(prevAsset => {
