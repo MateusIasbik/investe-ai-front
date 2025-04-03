@@ -41,7 +41,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType !== "Aporte" && (action.length >= 5)) {
-            axios.get(`https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
                     const priceNow = response.data.results[0].regularMarketPrice;
                     if (priceNow) {
@@ -86,12 +86,12 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType === "Compra" && value && amount && action) {
-            axios.get(`https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
                     const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
                     const correctName = response.data.results[0].symbol;
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
-                    const acquisitionValue = cleanCurrency(value);
+                    const acquisitionValue = (cleanCurrency(value));
                     const currentValueNumber = priceNow * amount;
 
                     const newAction = {
@@ -144,7 +144,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType === "Venda" && value && amount && action) {
-            axios.get(`https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const currentValueNumber = priceNow * amount;
