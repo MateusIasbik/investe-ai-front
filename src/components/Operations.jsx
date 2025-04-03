@@ -42,7 +42,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
         if (orderType !== "Aporte" && (action.length >= 5)) {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
-            .then((response) => {
+                .then((response) => {
                     const priceNow = response.data.results[0].regularMarketPrice;
                     if (priceNow) {
                         const numericValue = formatCurrency(amount * priceNow);
@@ -76,8 +76,8 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
             updateMyMoney(MY_MONEY + numericValue);
             setValue("");
             toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
-        } else if (orderType === "Aporte" && numericValue > 10000 || numericValue < 0) {
-            toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
+        } else if (orderType === "Aporte" && isNaN(numericValue) || numericValue <= 0 || numericValue > 10000) {
+            toast.error("O valor do aporte deve ser um número e estar entre R$ 1,00 e R$10.000,00");
         }
 
         if (orderType === "Compra" && cleanCurrency(value) > MY_MONEY) {
@@ -157,32 +157,31 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         return;
                     }
 
-                    // if (actionExists) {
-                    //     console.log("Ação existe sim!");
-                    // }
-
                     const updatedAssets = sortedData.map(act => {
                         if (act.name.toUpperCase() === action.toUpperCase()) {
 
                             if (Number(act.amount) < Number(amount)) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
-                                console.log(act);
 
                                 return act;
+                            } else {
+                                const updateAction = {
+                                    ...act,
+                                    amount: Number(act.amount) - Number(amount),
+                                    currentValue: currentValueNumber,
+                                    acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
+                                };
+
+                                if (updateAction.amount === 0) {
+                                    toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+                                    updateMyMoney(MY_MONEY + currentValueNumber);
+                                    return null;
+                                }
+
+                                toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+                                updateMyMoney(MY_MONEY + currentValueNumber);
+                                return updateAction;
                             }
-
-                            const updateAction = {
-                                ...act,
-                                amount: act.amount - Number(amount),
-                                currentValue: currentValueNumber,
-                                acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
-                            };
-
-                            if (updateAction.amount === 0) {
-                                return null;
-                            }
-
-                            return updateAction;
                         }
 
                         return act;
@@ -196,16 +195,11 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                     setValue("");
                     setAmount("100");
                     setAction("");
-                    updateMyMoney(MY_MONEY + currentValueNumber);
-
-                    toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-
                 })
 
                 .catch((error) => {
                     console.error("Erro ao buscar o banco de dados!", error);
                 });
-
         }
 
     };
