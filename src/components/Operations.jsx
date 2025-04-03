@@ -19,6 +19,50 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }).format(value);
     }
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit(e);
+        }
+    };
+
+    useEffect(() => {
+
+        if (orderType === "Aporte") {
+            setValue("");
+            setPlaceholder("R$ 0,00");
+            setAmount("");
+            setAction("");
+        }
+
+        if (orderType !== "Aporte" && (action.length > 6)) {
+            setValue("");
+            setAmount("100");
+            setPlaceholder("");
+        }
+
+        if (orderType !== "Aporte" && action.length >= 5) {
+            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+                .then((response) => {
+                    const priceNow = response.data.results[0].regularMarketPrice;
+                    if (priceNow) {
+                        const numericValue = formatCurrency(amount * priceNow);
+                        setAmount("100");
+                        setValue(numericValue);
+                    } else {
+                        setValue("R$ 0,00");
+                        setPlaceholder("");
+                    }
+                })
+                .catch(() => {
+                    if (action.length >= 6) {
+                        toast.error("O ativo digitado não existe, tente novamente!");
+                    }
+                    setValue("");
+                });
+        }
+
+    }, [action, amount, orderType]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -27,45 +71,49 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
             return parseFloat(str.replace("R$", "").replace(/\./g, "").replace(",", "."));
         };
 
-        const contribValue = contribution();
+        const numericValue = parseFloat(value.replace(",", "."));
 
-        if (orderType === "Aporte" && contribValue !== undefined) {
-            updateMyMoney(MY_MONEY + contribValue);
+        if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
+            updateMyMoney(MY_MONEY + numericValue);
             setValue("");
-        } else if (orderType === "Aporte" && contribValue === undefined) {
-            toast.error("O valor digitado está incorreto. Tente novamente!");
+            toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
+        } else if (orderType === "Aporte" && numericValue > 10000 || numericValue < 0) {
+            toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
         }
 
         if (orderType === "Compra" && cleanCurrency(value) > MY_MONEY) {
-            toast.error("Não há saldo suficiente, faça um aporte superior ao valor da compra!");
+            toast.error("Não há saldo suficiente, faça um aporte ou reduza a quantidade a ser adquirida!");
             return;
         }
 
         if (orderType === "Compra" && value && amount && action) {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
-                    const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO
+                    const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
                     const correctName = response.data.results[0].symbol;
-                    const data = Number(response.data.results[0].regularMarketPrice);
+                    const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const acquisitionValue = cleanCurrency(value);
-                    const currentValueNumber = data * amount;
+                    const currentValueNumber = priceNow * amount;
 
                     const newAction = {
                         id: lastID, //VERIFICAR ID
                         name: correctName,
-                        price: data,
+                        price: priceNow,
                         amount: Number(amount),
                         currentValue: currentValueNumber,
                         acquisitionValue: acquisitionValue
                     }
 
                     if (!sortedData.some(item => item.name === correctName)) {
+                        toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+
                         updateMyAssets([...sortedData, newAction]);
 
                         setValue("");
                         setAmount("100");
                         setAction("");
                         updateMyMoney(MY_MONEY - cleanCurrency(value));
+
                     } else {
                         const newData = sortedData.map(item => {
                             if (item.name === correctName) {
@@ -73,7 +121,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                                 return {
                                     ...item,
                                     amount: Number(item.amount) + Number(amount),
-                                    currentValue: (data * (Number(item.amount) + Number(amount))),
+                                    currentValue: (priceNow * (Number(item.amount) + Number(amount))),
                                     acquisitionValue: cleanCurrency(item.acquisitionValue) + cleanCurrency(value)
                                 }
                             }
@@ -81,6 +129,8 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                             return item;
 
                         })
+
+                        toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
 
                         updateMyAssets(newData);
 
@@ -100,15 +150,23 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         if (orderType === "Venda" && value && amount && action) {
             axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
                 .then((response) => {
-                    const data = Number(response.data.results[0].regularMarketPrice);
-                    const acquisitionValue = cleanCurrency(value);
-                    const currentValueNumber = data * amount;
+                    const priceNow = Number(response.data.results[0].regularMarketPrice);
+                    const currentValueNumber = priceNow * amount;
+
+                    const actionExists = sortedData.some(act => act.name.toUpperCase() === action.toUpperCase());
+
+                    if (!actionExists) {
+                        toast.error(`Você não possui ativos de ${action.toUpperCase()} para venda.`);
+                        return;
+                    }
 
                     const updatedAssets = sortedData.map(act => {
-                        if (act.name === action) {
+                        if (act.name.toUpperCase() === action.toUpperCase()) {
 
-                            if (act.amount < amount) {
+                            if (Number(act.amount) < Number(amount)) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
+                                console.log(act);
+
                                 return act;
                             }
 
@@ -125,8 +183,9 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                             return updateAction;
                         }
-                        
+
                         return act;
+
                     });
 
                     const filteredAssets = updatedAssets.filter(item => item !== null);
@@ -138,11 +197,9 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                     setAction("");
                     updateMyMoney(MY_MONEY + currentValueNumber);
 
-                    toast.success(`A venda de ${amount} ações de ${action} foi realizada com sucesso!`);
+                    toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
 
                 })
-
-
 
                 .catch((error) => {
                     console.error("Erro ao buscar o banco de dados!", error);
@@ -150,74 +207,6 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
         }
 
-        if (orderType === "Aporte" && action !== "") {
-            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
-                .then((response) => {
-                    const data = response.data.results[0].regularMarketPrice;
-                    if (data === undefined) {
-                        toast.error("O ativo digitado não existe, tente novamente!");
-                        return;
-                    }
-                    toast.success(`O aporte de ${action} no valor total de ${formatCurrency(data * amount)} foi realizado com sucesso!`);
-                })
-                .catch((error) => {
-                    console.error("Erro ao buscar o banco de dados!", error);
-                });
-        }
-
-    };
-
-    function contribution() {
-        const numericValue = parseFloat(value.replace(",", "."));
-
-        if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
-            toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
-            return numericValue;
-        } else if (orderType === "Aporte" && numericValue > 10000) {
-            toast.error("O valor do aporte deve estar entre R$ 1,00 e R$10.000,00");
-            return null;
-        }
-    }
-
-    useEffect(() => {
-
-        if (orderType === "Aporte") {
-            setValue("");
-            setPlaceholder("R$ 0,00");
-            setAmount("");
-            setAction("");
-        }
-
-        if (orderType !== "Aporte" && action.length !== 5) {
-            setValue("");
-            setAmount("100");
-            setPlaceholder("");
-        }
-
-        if (orderType !== "Aporte" && action !== "" && action.length === 5) {
-            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
-                .then((response) => {
-                    const data = response.data.results[0].regularMarketPrice;
-                    if (data) {
-                        const numericValue = formatCurrency(amount * data);
-                        setValue(numericValue);
-                    } else {
-                        setValue("R$ 0,00");
-                        setPlaceholder("");
-                    }
-                })
-                .catch((error) => {
-                    toast.error("O ativo digitado não existe, tente novamente!");
-                    setValue("");
-                });
-
-        }
-    }, [action, amount, orderType]);
-
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
-            handleSubmit(e);
-        }
     };
 
     return (
