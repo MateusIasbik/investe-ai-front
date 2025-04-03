@@ -109,7 +109,6 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         updateMyAssets([...sortedData, newAction]);
 
                         setValue("");
-                        // setAmount("100");
                         setAction("");
                         updateMyMoney(MY_MONEY - cleanCurrency(value));
 
@@ -133,7 +132,6 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                         updateMyAssets(newData);
 
                         setValue("");
-                        // setAmount("100");
                         setAction("");
                         updateMyMoney(MY_MONEY - cleanCurrency(value));
 
