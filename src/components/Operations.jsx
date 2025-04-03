@@ -116,8 +116,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                     } else {
                         const newData = sortedData.map(item => {
-                            if (item.name === correctName) {
-
+                            if (item.name.toUpperCase() === correctName.toUpperCase()) {
                                 return {
                                     ...item,
                                     amount: Number(item.amount) + Number(amount),
@@ -154,10 +153,13 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                     const currentValueNumber = priceNow * amount;
 
                     const actionExists = sortedData.some(act => act.name.toUpperCase() === action.toUpperCase());
-
                     if (!actionExists) {
                         toast.error(`Você não possui ativos de ${action.toUpperCase()} para venda.`);
                         return;
+                    }
+
+                    if (actionExists) {
+                        console.log("Ação existe sim!");
                     }
 
                     const updatedAssets = sortedData.map(act => {
