@@ -6,7 +6,6 @@ import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
-// import axios from "axios";
 
 export default function App() {
 
@@ -30,28 +29,6 @@ export default function App() {
     }
     return 0;
   });
-
-  // useEffect(() => {
-  //   sortedData.forEach(asset => {
-  //     axios.get(`http://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`)
-  //       .then((response) => {
-  //         const priceNow = Number(response.data.results[0].regularMarketPrice);
-  //         setMyAssets(prevAsset => {
-  //           return prevAsset.map(act => {
-  //             if(act.name === asset.name) {
-  //               return {...act, price: priceNow};
-  //             }
-  //             return act;
-  //           })
-  //         })
-  //       })
-
-  //       .catch((error) => {
-  //         console.error("Erro ao buscar o banco de dados!", error);
-  //       });
-  //   })
-
-  // }, [myAssets]);
 
   return (
     <>

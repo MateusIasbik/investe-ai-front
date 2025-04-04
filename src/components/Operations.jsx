@@ -11,6 +11,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
     const [amount, setAmount] = useState("100");
     const [value, setValue] = useState("");
     const [placeholder, setPlaceholder] = useState("");
+    const BRAPI_API = `https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -41,7 +42,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType !== "Aporte" && (action.length >= 5)) {
-            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+            axios.get(BRAPI_API)
                 .then((response) => {
                     const priceNow = response.data.results[0].regularMarketPrice;
                     if (priceNow) {
@@ -86,7 +87,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType === "Compra" && value && amount && action) {
-            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+            axios.get(BRAPI_API)
                 .then((response) => {
                     const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
                     const correctName = response.data.results[0].symbol;
@@ -144,7 +145,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType === "Venda" && value && amount && action) {
-            axios.get(`http://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`)
+            axios.get(BRAPI_API)
                 .then((response) => {
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const currentValueNumber = priceNow * amount;
@@ -157,7 +158,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                     const updatedAssets = sortedData.map(act => {
                         if (act.name.toUpperCase() === action.toUpperCase()) {
-
+                            
                             if (Number(act.amount) < Number(amount)) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
 
@@ -166,7 +167,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                                 const updateAction = {
                                     ...act,
                                     amount: Number(act.amount) - Number(amount),
-                                    currentValue: currentValueNumber,
+                                    currentValue: priceNow * (Number(act.amount) - Number(amount)),
                                     acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
                                 };
 
