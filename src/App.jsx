@@ -6,6 +6,7 @@ import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
+import axios from "axios";
 
 export default function App() {
 
@@ -29,6 +30,28 @@ export default function App() {
     }
     return 0;
   });
+
+
+
+  useEffect(() => {
+    const fetchAssetPrices = async () => {
+      
+      const updatedAssets = await Promise.all(myAssets.map(async (asset) => {
+        try {
+          const response = await axios.get(`https://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`);
+          const priceNow = Number(response.data.results[0].regularMarketPrice);
+          return { ...asset, price: priceNow };
+        } catch (error) {
+          console.error("Erro ao buscar o preço do ativo", asset.name, error);
+          return asset;
+        }
+      }));
+
+      setMyAssets(updatedAssets);
+    };
+
+    fetchAssetPrices();
+  }, []);
 
   return (
     <>
