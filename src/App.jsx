@@ -54,7 +54,7 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <ScreenStyled>
       <Top>Investe Aí</Top>
 
       <Container>
@@ -64,17 +64,21 @@ export default function App() {
         <Diversification sortedData={sortedData} />
         <Assets sortedData={sortedData} />
       </Container>
-    </>
+    </ScreenStyled>
   )
 }
 
+const ScreenStyled = styled.div`
+  width: 100%;
+  height: 100%;
+`
+
 const Top = styled.div`
   width: 100%;
-  margin: 0;
   background-color: #191919;
   font-family: 'Roboto', sans-serif;
   color: #fff;
-  padding: 12px;
+  padding: 12px 0;
   display: flex;
   justify-content: center;
   text-align: center;
@@ -88,8 +92,8 @@ const Top = styled.div`
 
 const Container = styled.div`
   width: 100%;
-  margin: 70px 25% 0 25%;
   display: flex;
+  padding: 70px 0;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
@@ -99,11 +103,12 @@ const Container = styled.div`
   font-size: 24px;
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding: auto;
+    text-align: center;
+
   }
 `;
