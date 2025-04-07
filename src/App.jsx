@@ -71,6 +71,18 @@ export default function App() {
 const ScreenStyled = styled.div`
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: red;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
 `
 
 const Top = styled.div`
@@ -91,7 +103,6 @@ const Top = styled.div`
 `;
 
 const Container = styled.div`
-  width: 100%;
   display: flex;
   padding: 70px 0;
   flex-direction: column;
@@ -103,7 +114,8 @@ const Container = styled.div`
   font-size: 24px;
 
   @media (max-width: 768px) {
-    width: 100vh;
+    padding: 70px 25%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
