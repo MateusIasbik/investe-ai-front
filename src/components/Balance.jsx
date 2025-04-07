@@ -1,18 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import { formatCurrency } from "../functions/FormatCurrency";
 
 export default function Balance( {sortedData, MY_MONEY}) {
 
     const investmentEquity = sortedData.reduce((acc, asset) => {
         return acc + asset.currentValue;
     }, 0);
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(value);
-    }
 
     return (
         <OperationsStyled>
@@ -29,11 +23,19 @@ export default function Balance( {sortedData, MY_MONEY}) {
 }
 
 const OperationsStyled = styled.div`
-    min-width: 1025px;
+    width: 1025px;
     display: flex;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     justify-content: space-between;
+
+    @media (max-width: 768px) {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 `
 
 const BoxStyled = styled.div`
@@ -63,4 +65,12 @@ const BoxStyled = styled.div`
         font-size: 40px;
         color: #205934;
     }
+
+    @media (max-width: 768px) {
+    min-width: 375px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
 `

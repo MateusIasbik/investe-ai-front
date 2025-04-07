@@ -91,10 +91,18 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  min-height: 100vh;
   margin: 80px 23% 0 23%;
   color: #000;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 24px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: auto;
+  }
 `;

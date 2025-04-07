@@ -3,22 +3,18 @@ import styled from "styled-components";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import { getActionFromAPIWhenBuyOrSell } from "../functions/GetActionFromAPIWhenBuyOrSell";
+import { formatCurrency } from "../functions/FormatCurrency";
+import { cleanCurrency } from "../functions/CleanCurrency";
 
 export default function Operations({ MY_MONEY, sortedData, updateMyMoney, updateMyAssets }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
-    const [amount, setAmount] = useState("100");
+    const [amount, setAmount] = useState("");
     const [value, setValue] = useState("");
     const [placeholder, setPlaceholder] = useState("");
     const BRAPI_API = `https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(value);
-    }
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
@@ -35,41 +31,24 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
             setAction("");
         }
 
-        if (orderType !== "Aporte" && (action.length > 6 || action.length < 5)) {
-            setValue("");
-            setAmount("100");
-            setPlaceholder("");
+        if (orderType !== "Aporte") {
+
+            if (action.length < 5) {
+                setValue("");
+                setPlaceholder("");
+            }
+
+            if ((action.length >= 5)) {
+                setAmount("100");
+                getActionFromAPIWhenBuyOrSell(action, BRAPI_API, setValue, setPlaceholder, amount);
+            }
         }
 
-        if (orderType !== "Aporte" && (action.length >= 5)) {
-            axios.get(BRAPI_API)
-                .then((response) => {
-                    const priceNow = response.data.results[0].regularMarketPrice;
-                    if (priceNow) {
-                        const numericValue = formatCurrency(amount * priceNow);
-                        setValue(numericValue);
-                    } else {
-                        setValue("R$ 0,00");
-                        setPlaceholder("");
-                    }
-                })
-                .catch(() => {
-                    if (action.length >= 6) {
-                        toast.error("O ativo digitado não existe, tente novamente!");
-                    }
-                    setValue("");
-                });
-        }
 
     }, [action, amount, orderType]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const cleanCurrency = (currencyString) => {
-            const str = String(currencyString);
-            return parseFloat(str.replace("R$", "").replace(/\./g, "").replace(",", "."));
-        };
 
         const numericValue = parseFloat(value.replace(",", "."));
 
@@ -88,60 +67,59 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
         if (orderType === "Compra" && value && amount && action) {
             axios.get(BRAPI_API)
-                .then((response) => {
-                    const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
-                    const correctName = response.data.results[0].symbol;
-                    const priceNow = Number(response.data.results[0].regularMarketPrice);
-                    const acquisitionValue = (cleanCurrency(value));
-                    const currentValueNumber = priceNow * amount;
-
-                    const newAction = {
-                        id: lastID, //VERIFICAR ID
-                        name: correctName,
-                        price: priceNow,
-                        amount: Number(amount),
-                        currentValue: currentValueNumber,
-                        acquisitionValue: acquisitionValue
-                    }
-
-                    if (!sortedData.some(item => item.name === correctName)) {
-                        toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-
-                        updateMyAssets([...sortedData, newAction]);
-
-                        setValue("");
-                        setAction("");
-                        updateMyMoney(MY_MONEY - cleanCurrency(value));
-
-                    } else {
-                        const newData = sortedData.map(item => {
-                            if (item.name.toUpperCase() === correctName.toUpperCase()) {
-                                return {
-                                    ...item,
-                                    amount: Number(item.amount) + Number(amount),
-                                    currentValue: (priceNow * (Number(item.amount) + Number(amount))),
-                                    acquisitionValue: cleanCurrency(item.acquisitionValue) + cleanCurrency(value)
-                                }
+            .then((response) => {
+                const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
+                const correctName = response.data.results[0].symbol;
+                const priceNow = Number(response.data.results[0].regularMarketPrice);
+                const acquisitionValue = (cleanCurrency(value));
+                const currentValueNumber = priceNow * amount;
+    
+                const newAction = {
+                    id: lastID, //VERIFICAR ID
+                    name: correctName,
+                    price: priceNow,
+                    amount: Number(amount),
+                    currentValue: currentValueNumber,
+                    acquisitionValue: acquisitionValue
+                }
+    
+                if (!sortedData.some(item => item.name === correctName)) {
+                    toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+    
+                    updateMyAssets([...sortedData, newAction]);
+    
+                    setValue("");
+                    setAction("");
+                    updateMyMoney(MY_MONEY - cleanCurrency(value));
+    
+                } else {
+                    const newData = sortedData.map(item => {
+                        if (item.name.toUpperCase() === correctName.toUpperCase()) {
+                            return {
+                                ...item,
+                                amount: Number(item.amount) + Number(amount),
+                                currentValue: (priceNow * (Number(item.amount) + Number(amount))),
+                                acquisitionValue: cleanCurrency(item.acquisitionValue) + cleanCurrency(value)
                             }
-
-                            return item;
-
-                        })
-
-                        toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-
-                        updateMyAssets(newData);
-
-                        setValue("");
-                        setAction("");
-                        updateMyMoney(MY_MONEY - cleanCurrency(value));
-
-                    }
-                })
-
-                .catch((error) => {
-                    console.error("Erro ao buscar o banco de dados!", error);
-                });
+                        }
+    
+                        return item;
+    
+                    })
+                    toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+    
+                    updateMyAssets(newData);
+    
+                    setValue("");
+                    setAction("");
+                    updateMyMoney(MY_MONEY - cleanCurrency(value));
+    
+                }
+            })
+    
+            .catch((error) => {
+                console.error("Erro ao buscar o banco de dados!", error);
+            });
         }
 
         if (orderType === "Venda" && value && amount && action) {
@@ -158,7 +136,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                     const updatedAssets = sortedData.map(act => {
                         if (act.name.toUpperCase() === action.toUpperCase()) {
-                            
+
                             if (Number(act.amount) < Number(amount)) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
 
@@ -229,6 +207,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                             type="text"
                             id="action"
                             placeholder="Ação"
+                            maxLength={6}
                             value={action}
                             onChange={e => setAction(e.target.value)}
                         />
@@ -278,6 +257,13 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 const TitleStyled = styled.h1`
     width: 1025px;
     margin: 35px 0;
+
+    @media (max-width: 768px) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+    }
 `
 
 const OperationsStyled = styled.div`
@@ -321,6 +307,11 @@ const InputStyled = styled.div`
         border: 1px solid #DBDBDB;
     }
 
+    select {
+        width: 190px;
+        height: 45px;
+    }
+
     button {
         background-color: #4AE07F;
         color: #000;
@@ -331,5 +322,18 @@ const InputStyled = styled.div`
         min-height: 60px;
         min-width: 180px;
         margin-top: 1%;
+    }
+
+    @media (max-width: 768px) {
+        display: flex;
+        height: 470px;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+
+        h2 {
+            display: flex;
+            justify-content: center;
+        }
     }
 `

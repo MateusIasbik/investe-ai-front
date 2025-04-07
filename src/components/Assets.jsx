@@ -29,4 +29,11 @@ const TitleStyled = styled.h1`
     padding-top: 50px;
     margin: 35px 0;
     min-width: 1025px;
+
+    @media (max-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 `

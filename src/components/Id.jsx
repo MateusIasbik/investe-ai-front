@@ -19,5 +19,13 @@ const IdStyled = styled.div`
         font-size: 18px;
         font-family: 'Roboto', sans-serif;
         font-weight: 500;
+
+        @media (max-width: 768px) {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
     }
 `
