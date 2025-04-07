@@ -30,7 +30,7 @@ const OperationsStyled = styled.div`
     justify-content: space-between;
 
     @media (max-width: 768px) {
-    width: 100%;
+        width: 1025px;
     display: flex;
     flex-direction: column;
     justify-content: center;

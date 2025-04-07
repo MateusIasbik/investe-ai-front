@@ -55,15 +55,15 @@ export default function App() {
 
   return (
     <ScreenStyled>
-      <Top>Investe Aí</Top>
+      <TopStyled>Investe Aí</TopStyled>
 
-      <Container>
+      <ContainerStyled>
         <Id />
         <Balance sortedData={sortedData} MY_MONEY={myMoney} />
         <Operations MY_MONEY={myMoney} sortedData={sortedData} updateMyMoney={updateMyMoney} updateMyAssets={updateMyAssets} />
         <Diversification sortedData={sortedData} />
         <Assets sortedData={sortedData} />
-      </Container>
+      </ContainerStyled>
     </ScreenStyled>
   )
 }
@@ -79,12 +79,12 @@ const ScreenStyled = styled.div`
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
   }
 `
 
-const Top = styled.div`
+const TopStyled = styled.div`
   width: 100%;
   background-color: #191919;
   font-family: 'Roboto', sans-serif;
@@ -99,14 +99,18 @@ const Top = styled.div`
     top: 0;
     left: 0;
   z-index: 3;
+
+  @media (max-width: 768px) {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
 `;
 
-const Container = styled.div`
+const ContainerStyled = styled.div`
   display: flex;
   padding: 70px 0;
   flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
   color: #000;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;

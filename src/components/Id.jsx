@@ -21,7 +21,7 @@ const IdStyled = styled.div`
         font-weight: 500;
 
         @media (max-width: 768px) {
-            width: 100%;
+            width: 1025px;
             display: flex;
             flex-direction: column;
             justify-content: center;

@@ -18,8 +18,9 @@ export default function Assets({ sortedData }) {
     return (
         <>
             <TitleStyled>Ativos</TitleStyled>
-
-            <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss} />
+            <AssetsStyled>
+                <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss} />
+            </AssetsStyled>
         </>
     )
 }
@@ -28,7 +29,8 @@ const TitleStyled = styled.h1`
     border-top: 1px solid #DEDEDF;
     padding-top: 50px;
     margin: 35px 0;
-    min-width: 1025px;
+    width: 1025px;
+    background-color: ;
 
     @media (max-width: 768px) {
         display: flex;
@@ -37,3 +39,18 @@ const TitleStyled = styled.h1`
         align-items: center;
     }
 `
+
+const AssetsStyled = styled.div`
+    width: 1025px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+`   

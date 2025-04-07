@@ -279,7 +279,7 @@ const InputStyled = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    min-width: 100%;
+    width: 100%;
     border-radius: 10px;
     border: none;
     font-size: 16px;
@@ -319,8 +319,8 @@ const InputStyled = styled.div`
         font-family: 'Roboto', sans-serif;
         font-weight: 500;
         border: none;
-        min-height: 60px;
-        min-width: 180px;
+        height: 60px;
+        width: 180px;
         margin-top: 1%;
     }
 

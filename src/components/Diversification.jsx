@@ -76,14 +76,15 @@ export default function Diversification({ sortedData }) {
 }
 
 const TitleStyled = styled.h1`
+    width: 1025px;
     margin: 35px 0;
 
     @media (max-width: 768px) {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: 30px;
+        margin-top: 10px;
+
     }
 `
 
@@ -91,5 +92,5 @@ const ContainerStyled = styled.div`
     display: flex; 
     justify-content: center;
     align-items: center;
-    min-width: 1025px;
+    width: 1025px;
 `
