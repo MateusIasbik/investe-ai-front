@@ -87,11 +87,12 @@ const Top = styled.div`
 `;
 
 const Container = styled.div`
+  width: 100%;
+  margin: 70px 25% 0 25%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  margin: 80px 23% 0 23%;
   color: #000;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;

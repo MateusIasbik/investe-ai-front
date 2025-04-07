@@ -67,7 +67,7 @@ const BoxStyled = styled.div`
     }
 
     @media (max-width: 768px) {
-    min-width: 375px;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
