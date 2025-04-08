@@ -7,6 +7,8 @@ import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 export default function App() {
 
@@ -35,18 +37,26 @@ export default function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     let storedToken = urlParams.get("id");
-    console.log(storedToken);
+    console.log("Stored Token 1:", storedToken);
+
     if (!storedToken) {
       storedToken = localStorage.getItem("token");
-      console.log(storedToken);
+      console.log("Stored Token 2:", storedToken);
     }
+
+    if (!storedToken) {
+      storedToken = uuidv4();
+      localStorage.setItem("token", storedToken);
+      console.log("Stored Token 3:", storedToken);
+    }
+
     setToken(storedToken);
   }, []);
 
   useEffect(() => {
-    
+
     const fetchAssetPrices = async () => {
-      
+
       const updatedAssets = await Promise.all(myAssets.map(async (asset) => {
         try {
           const response = await axios.get(`https://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`);
@@ -65,17 +75,22 @@ export default function App() {
   }, []);
 
   return (
-    <ScreenStyled>
-      <TopStyled>Investe Aí</TopStyled>
+    <Router>
+      <ScreenStyled>
+        <TopStyled>Investe Aí</TopStyled>
 
-      <ContainerStyled>
-        <Id />
-        <Balance sortedData={sortedData} MY_MONEY={myMoney} />
-        <Operations MY_MONEY={myMoney} sortedData={sortedData} updateMyMoney={updateMyMoney} updateMyAssets={updateMyAssets} />
-        <Diversification sortedData={sortedData} />
-        <Assets sortedData={sortedData} />
-      </ContainerStyled>
-    </ScreenStyled>
+        <ContainerStyled>
+          <Routes>
+            <Route path="/:token" element={<Id token={token} />} />
+            <Route path="/" element={<Id token={token} />} />
+          </Routes>
+          <Balance sortedData={sortedData} MY_MONEY={myMoney} />
+          <Operations MY_MONEY={myMoney} sortedData={sortedData} updateMyMoney={updateMyMoney} updateMyAssets={updateMyAssets} />
+          <Diversification sortedData={sortedData} />
+          <Assets sortedData={sortedData} />
+        </ContainerStyled>
+      </ScreenStyled>
+    </Router>
   )
 }
 
