@@ -35,6 +35,7 @@ export default function App() {
   });
 
   const { token: routeToken } = useParams();
+  console.log('routeToken:', routeToken);
 
   useEffect(() => {
     let storedToken = routeToken;
