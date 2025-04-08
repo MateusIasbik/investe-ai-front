@@ -20,7 +20,8 @@
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.1",
     "sort-by": "^1.2.0",
-    "styled-components": "^6.1.16"
+    "styled-components": "^6.1.16",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

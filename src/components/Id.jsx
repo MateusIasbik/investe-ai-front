@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Id() {
-    const idNumber = "d66416cc";
+    const [idNumber, setIdNumber] = useState("");
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        let storedId = urlParams.get("id");
+
+        if (!storedId) {
+            storedId = localStorage.getItem("token");
+        }
+
+        if (!storedId) {
+            storedId = uuidv4();
+            localStorage.setItem("token", storedId);
+        }
+
+        setIdNumber(storedId);
+
+    }, []);
 
     return (
         <IdStyled>

@@ -10,6 +10,7 @@ import axios from "axios";
 
 export default function App() {
 
+  const [token, setToken] = useState("");
   const [myMoney, setMyMoney] = useState(MY_MONEY);
   const [myAssets, setMyAssets] = useState(MY_ASSETS);
 
@@ -31,9 +32,19 @@ export default function App() {
     return 0;
   });
 
-
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    let storedToken = urlParams.get("id");
+    console.log(storedToken);
+    if (!storedToken) {
+      storedToken = localStorage.getItem("token");
+      console.log(storedToken);
+    }
+    setToken(storedToken);
+  }, []);
 
   useEffect(() => {
+    
     const fetchAssetPrices = async () => {
       
       const updatedAssets = await Promise.all(myAssets.map(async (asset) => {
