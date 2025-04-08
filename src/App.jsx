@@ -8,7 +8,7 @@ import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
 
 export default function App() {
 
@@ -34,9 +34,11 @@ export default function App() {
     return 0;
   });
 
+  const { token: routeToken } = useParams();
+  console.log("Route Token:", routeToken);
+
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    let storedToken = urlParams.get("id");
+    let storedToken = routeToken;
     console.log("Stored Token 1:", storedToken);
 
     if (!storedToken) {
