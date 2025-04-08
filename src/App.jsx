@@ -35,25 +35,21 @@ export default function App() {
   });
 
   const { token: routeToken } = useParams();
-  console.log("Route Token:", routeToken);
 
   useEffect(() => {
     let storedToken = routeToken;
-    console.log("Stored Token 1:", storedToken);
 
     if (!storedToken) {
       storedToken = localStorage.getItem("token");
-      console.log("Stored Token 2:", storedToken);
     }
 
     if (!storedToken) {
       storedToken = uuidv4();
       localStorage.setItem("token", storedToken);
-      console.log("Stored Token 3:", storedToken);
     }
 
     setToken(storedToken);
-  }, []);
+  }, [routeToken]);
 
   useEffect(() => {
 
