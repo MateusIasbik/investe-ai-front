@@ -71,12 +71,9 @@ export default function App() {
 const ScreenStyled = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
 
   @media (max-width: 768px) {
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -87,43 +84,46 @@ const ScreenStyled = styled.div`
 const TopStyled = styled.div`
   width: 100%;
   background-color: #191919;
-  font-family: 'Roboto', sans-serif;
   color: #fff;
+  font-family: 'Roboto', sans-serif;
   padding: 12px 0;
   display: flex;
   justify-content: center;
-  text-align: center;
+  align-items: center;
   font-size: 48px;
   font-weight: bold;
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
   z-index: 3;
 
   @media (max-width: 768px) {
-    display: flex;
+    position: fixed;
     width: 100%;
-    justify-content: center;
+    top: 0;
+    left: 0;
   }
 `;
 
 const ContainerStyled = styled.div`
+  position: relative;
+  top: 70px;
+  height: 100%;
+  width: 1026px;
   display: flex;
-  padding: 70px 0;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   color: #000;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 24px;
+  margin: 0 auto;
 
   @media (max-width: 768px) {
-    padding: 70px 25%;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
-
+    margin: 0;
   }
 `;

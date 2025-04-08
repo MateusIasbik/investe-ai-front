@@ -23,14 +23,14 @@ export default function Balance( {sortedData, MY_MONEY}) {
 }
 
 const OperationsStyled = styled.div`
-    width: 1025px;
+    width: 100%;
     display: flex;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     justify-content: space-between;
 
     @media (max-width: 768px) {
-        width: 1025px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;

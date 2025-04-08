@@ -44,7 +44,7 @@ export default function Diversification({ sortedData }) {
     };
 
     return (
-        <div>
+        <DiversificationStyled>
             <TitleStyled>Diversificação</TitleStyled>
 
             <ContainerStyled>
@@ -71,19 +71,31 @@ export default function Diversification({ sortedData }) {
                 </ResponsiveContainer>
             </ContainerStyled>
 
-        </div>
+        </DiversificationStyled>
     )
 }
 
-const TitleStyled = styled.h1`
-    width: 1025px;
+const DiversificationStyled = styled.div`
+    width: 100%;
     margin: 35px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        margin: 0;
+    }
+`
+
+const TitleStyled = styled.h1`
+    width: 100%;
 
     @media (max-width: 768px) {
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 10px;
+        margin-top: 30px;
 
     }
 `
@@ -92,5 +104,5 @@ const ContainerStyled = styled.div`
     display: flex; 
     justify-content: center;
     align-items: center;
-    width: 1025px;
+    width: 100%;
 `

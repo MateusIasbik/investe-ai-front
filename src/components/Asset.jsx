@@ -59,7 +59,7 @@ const BoxStyled = styled.div`
     align-items: center;
     border-radius: 10px;
     height: 91px;
-    width: 1025px;
+    width: 100%;
     margin-bottom: 15px;
     
     h1 {
@@ -96,7 +96,7 @@ const BoxStyled = styled.div`
     }
 
     @media (max-width: 768px) {
-        width: 375px;
+        width: 80%;
         height: 224px;
         display: flex;
         flex-direction: column;
@@ -131,7 +131,7 @@ const BoxInformationAssetsStyled = styled.div`
 
     @media (max-width: 768px) {
         height: 70%;
-        width: auto;
+        width: 100%;
         flex-wrap: wrap;
         display: flex;
         justify-content: space-evenly;

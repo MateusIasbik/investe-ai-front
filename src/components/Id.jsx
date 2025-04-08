@@ -12,8 +12,9 @@ export default function Id() {
 }
 
 const IdStyled = styled.div`
+    width: 100%;
+
     h1 {
-        width: 1025px;
         margin: 25px 0;
         color: #000000;
         font-size: 18px;
@@ -21,7 +22,7 @@ const IdStyled = styled.div`
         font-weight: 500;
 
         @media (max-width: 768px) {
-            width: 1025px;
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;

@@ -255,7 +255,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 }
 
 const TitleStyled = styled.h1`
-    width: 1025px;
+    width: 100%;
     margin: 35px 0;
 
     @media (max-width: 768px) {
@@ -269,7 +269,7 @@ const TitleStyled = styled.h1`
 const OperationsStyled = styled.div`
     display: flex;
     align-items: center;
-    min-width: 1025px;
+    width: 100%;
     min-height: 123px;
     border-radius: 10px;
     background-color: #F6F6F6;

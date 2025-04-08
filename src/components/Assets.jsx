@@ -27,10 +27,9 @@ export default function Assets({ sortedData }) {
 
 const TitleStyled = styled.h1`
     border-top: 1px solid #DEDEDF;
-    padding-top: 50px;
-    margin: 35px 0;
-    width: 1025px;
-    background-color: ;
+    padding: 30px 0;
+    margin: 0px 0;
+    width: 100%;
 
     @media (max-width: 768px) {
         display: flex;
@@ -41,7 +40,7 @@ const TitleStyled = styled.h1`
 `
 
 const AssetsStyled = styled.div`
-    width: 1025px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
