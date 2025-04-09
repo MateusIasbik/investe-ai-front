@@ -8,7 +8,7 @@ import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 
 export default function App() {
 
@@ -74,7 +74,7 @@ export default function App() {
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       <ScreenStyled>
         <TopStyled>Investe Aí</TopStyled>
 
@@ -89,7 +89,7 @@ export default function App() {
           <Assets sortedData={sortedData} />
         </ContainerStyled>
       </ScreenStyled>
-    </Router>
+    </BrowserRouter>
   )
 }
 
