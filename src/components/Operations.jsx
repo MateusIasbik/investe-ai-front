@@ -32,14 +32,18 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         }
 
         if (orderType !== "Aporte") {
-
+            
             if (action.length < 5) {
                 setValue("");
                 setPlaceholder("");
+                return;
             }
 
-            if ((action.length >= 5)) {
+            if (action.length >= 5 && !amount) {
                 setAmount("100");
+            }
+
+            if (action.length >= 5 && amount) {
                 getActionFromAPIWhenBuyOrSell(action, BRAPI_API, setValue, setPlaceholder, amount);
             }
         }
@@ -210,6 +214,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                             maxLength={6}
                             value={action}
                             onChange={e => setAction(e.target.value)}
+                            disabled={orderType === "Aporte"}
                         />
                     </div>
 
@@ -221,6 +226,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                             placeholder={amount}
                             value={amount}
                             onChange={e => setAmount(e.target.value)}
+                            disabled={orderType === "Aporte"}
                         />
                     </div>
 
@@ -233,6 +239,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                             value={value}
                             onChange={e => setValue(e.target.value)}
                             onKeyDown={handleKeyDown}
+                            disabled={orderType === "Compra" || orderType === "Venda"}
                         />
                     </div>
 

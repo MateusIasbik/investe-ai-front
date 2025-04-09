@@ -7,8 +7,6 @@ import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
-import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 
 export default function App() {
 
@@ -34,24 +32,6 @@ export default function App() {
     return 0;
   });
 
-  const { token: routeToken } = useParams();
-  console.log('routeToken:', routeToken);
-
-  useEffect(() => {
-    let storedToken = routeToken;
-
-    if (!storedToken) {
-      storedToken = localStorage.getItem("token");
-    }
-
-    if (!storedToken) {
-      storedToken = uuidv4();
-      localStorage.setItem("token", storedToken);
-    }
-
-    setToken(storedToken);
-  }, [routeToken]);
-
   useEffect(() => {
 
     const fetchAssetPrices = async () => {
@@ -74,22 +54,17 @@ export default function App() {
   }, []);
 
   return (
-    <BrowserRouter>
       <ScreenStyled>
         <TopStyled>Investe Aí</TopStyled>
 
         <ContainerStyled>
-          <Routes>
-            <Route path="/:token" element={<Id token={token} />} />
-            <Route path="/" element={<Id token={token} />} />
-          </Routes>
+            <Id token={token} setToken={setToken}/>
           <Balance sortedData={sortedData} MY_MONEY={myMoney} />
           <Operations MY_MONEY={myMoney} sortedData={sortedData} updateMyMoney={updateMyMoney} updateMyAssets={updateMyAssets} />
           <Diversification sortedData={sortedData} />
           <Assets sortedData={sortedData} />
         </ContainerStyled>
       </ScreenStyled>
-    </BrowserRouter>
   )
 }
 

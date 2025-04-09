@@ -4,10 +4,11 @@ import { formatCurrency } from "./FormatCurrency";
 
 
 export function getActionFromAPIWhenBuyOrSell(action, BRAPI_API, setValue, setPlaceholder, amount) {
+    
     axios.get(BRAPI_API)
         .then((response) => {
             const priceNow = response.data.results[0].regularMarketPrice;
-
+            
             if (priceNow) {
                 const numericValue = formatCurrency(amount * priceNow);
 
