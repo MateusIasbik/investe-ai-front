@@ -32,7 +32,8 @@ export default function App() {
         try {
           const response = await axios.get(`https://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`);
           const priceNow = Number(response.data.results[0].regularMarketPrice);
-          return { ...asset, price: priceNow };
+          const currentNow = Number(priceNow * asset.amount);
+          return { ...asset, price: priceNow, currentValue: currentNow };
         } catch (error) {
           console.error("Erro ao buscar o preço do ativo", asset.name, error);
           return asset;
@@ -43,7 +44,7 @@ export default function App() {
     };
 
     fetchAssetPrices();
-  }, []);
+  }, [myMoney]);
 
   return (
       <ScreenStyled>

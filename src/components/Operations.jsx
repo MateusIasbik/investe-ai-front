@@ -32,7 +32,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         }
 
         if (orderType !== "Aporte") {
-            
+
             if (action.length < 5) {
                 setValue("");
                 setPlaceholder("");
@@ -47,7 +47,6 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                 getActionFromAPIWhenBuyOrSell(action, BRAPI_API, setValue, setPlaceholder, amount);
             }
         }
-
 
     }, [action, amount, orderType]);
 
@@ -71,59 +70,69 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
         if (orderType === "Compra" && value && amount && action) {
             axios.get(BRAPI_API)
-            .then((response) => {
-                const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
-                const correctName = response.data.results[0].symbol;
-                const priceNow = Number(response.data.results[0].regularMarketPrice);
-                const acquisitionValue = (cleanCurrency(value));
-                const currentValueNumber = priceNow * amount;
-    
-                const newAction = {
-                    id: lastID, //VERIFICAR ID
-                    name: correctName,
-                    price: priceNow,
-                    amount: Number(amount),
-                    currentValue: currentValueNumber,
-                    acquisitionValue: acquisitionValue
-                }
-    
-                if (!sortedData.some(item => item.name === correctName)) {
-                    toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-    
-                    setMyAssets([...sortedData, newAction]);
-    
-                    setValue("");
-                    setAction("");
-                    setMyMoney(MY_MONEY - cleanCurrency(value));
-    
-                } else {
-                    const newData = sortedData.map(item => {
-                        if (item.name.toUpperCase() === correctName.toUpperCase()) {
-                            return {
-                                ...item,
-                                amount: Number(item.amount) + Number(amount),
-                                currentValue: (priceNow * (Number(item.amount) + Number(amount))),
-                                acquisitionValue: cleanCurrency(item.acquisitionValue) + cleanCurrency(value)
+                .then((response) => {
+                    const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
+                    const correctName = response.data.results[0].symbol;
+                    const priceNow = Number(response.data.results[0].regularMarketPrice);
+                    const acquisitionValue = (cleanCurrency(value));
+                    const currentValueNumber = priceNow * amount;
+
+                    const newAction = {
+                        id: lastID, //VERIFICAR ID - PROVAVELMENTE REVEMOR ID AQUI
+                        name: correctName,
+                        price: priceNow,
+                        amount: Number(amount),
+                        currentValue: currentValueNumber,
+                        acquisitionValue: acquisitionValue
+                    }
+
+                    console.log("Passar a newAction para API esta:", newAction); //PASSAR O newAction PARA A API
+
+                    if (!sortedData.some(item => item.name === correctName)) {
+
+                        console.log("Se não tiver a ação, passar para API esta:", newAction); //PASSAR O newAction PARA A API CASO NÃO EXISTA A AÇÃO
+
+                        toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+
+                        setMyAssets([...sortedData, newAction]);
+
+                        setValue("");
+                        setAction("");
+                        setMyMoney(MY_MONEY - cleanCurrency(value));
+
+                    } else {
+                        const newData = sortedData.map(item => {
+                            if (item.name.toUpperCase() === correctName.toUpperCase()) {
+                                const result = {
+                                    ...item,
+                                    amount: Number(item.amount) + Number(amount),
+                                    currentValue: (priceNow * (Number(item.amount) + Number(amount))),
+                                    acquisitionValue: item.acquisitionValue + Number(cleanCurrency(value))
+                                }
+
+                                console.log("Se já houver a ação, passar este result: ", result); //PASSAR O RESULT PARA A API CASO JÁ EXISTA A AÇÃO
+
+                                return result;
                             }
-                        }
-    
-                        return item;
-    
-                    })
-                    toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-    
-                    setMyAssets(newData);
-    
-                    setValue("");
-                    setAction("");
-                    setMyMoney(MY_MONEY - cleanCurrency(value));
-    
-                }
-            })
-    
-            .catch((error) => {
-                console.error("Erro ao buscar o banco de dados!", error);
-            });
+
+
+                            return item;
+
+                        })
+                        toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+
+                        setMyAssets(newData);
+
+                        setValue("");
+                        setAction("");
+                        setMyMoney(MY_MONEY - cleanCurrency(value));
+
+                    }
+                })
+
+                .catch((error) => {
+                    console.error("Erro ao buscar o banco de dados!", error);
+                });
         }
 
         if (orderType === "Venda" && value && amount && action) {
@@ -143,7 +152,6 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
                             if (Number(act.amount) < Number(amount)) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
-
                                 return act;
                             } else {
                                 const updateAction = {
@@ -152,6 +160,8 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                     currentValue: priceNow * (Number(act.amount) - Number(amount)),
                                     acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
                                 };
+
+                                console.log("Passar essa ação quando a quantidade for reduzida", updateAction); //QUANDO A VENDA DA AÇÃO OCORRER
 
                                 if (updateAction.amount === 0) {
                                     toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
