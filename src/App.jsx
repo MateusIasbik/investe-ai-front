@@ -14,14 +14,6 @@ export default function App() {
   const [myMoney, setMyMoney] = useState(MY_MONEY);
   const [myAssets, setMyAssets] = useState(MY_ASSETS);
 
-  const updateMyMoney = (newAmount) => {
-    setMyMoney(newAmount);
-  };
-
-  const updateMyAssets = (newAssets) => {
-    setMyAssets(newAssets);
-  };
-
   const sortedData = [...myAssets].sort((a, b) => {
     if (a.name.toLowerCase() < b.name.toLowerCase()) {
       return -1;
@@ -60,7 +52,7 @@ export default function App() {
         <ContainerStyled>
             <Id token={token} setToken={setToken}/>
           <Balance sortedData={sortedData} MY_MONEY={myMoney} />
-          <Operations MY_MONEY={myMoney} sortedData={sortedData} updateMyMoney={updateMyMoney} updateMyAssets={updateMyAssets} />
+          <Operations MY_MONEY={myMoney} sortedData={sortedData} setMyMoney={setMyMoney} setMyAssets={setMyAssets} />
           <Diversification sortedData={sortedData} />
           <Assets sortedData={sortedData} />
         </ContainerStyled>

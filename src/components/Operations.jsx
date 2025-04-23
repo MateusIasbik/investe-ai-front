@@ -7,7 +7,7 @@ import { getActionFromAPIWhenBuyOrSell } from "../functions/GetActionFromAPIWhen
 import { formatCurrency } from "../functions/FormatCurrency";
 import { cleanCurrency } from "../functions/CleanCurrency";
 
-export default function Operations({ MY_MONEY, sortedData, updateMyMoney, updateMyAssets }) {
+export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAssets }) {
 
     const [orderType, setOrderType] = useState("Compra");
     const [action, setAction] = useState("");
@@ -57,7 +57,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
         const numericValue = parseFloat(value.replace(",", "."));
 
         if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
-            updateMyMoney(MY_MONEY + numericValue);
+            setMyMoney(MY_MONEY + numericValue);
             setValue("");
             toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
         } else if (orderType === "Aporte" && isNaN(numericValue) || numericValue <= 0 || numericValue > 10000) {
@@ -90,11 +90,11 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                 if (!sortedData.some(item => item.name === correctName)) {
                     toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
     
-                    updateMyAssets([...sortedData, newAction]);
+                    setMyAssets([...sortedData, newAction]);
     
                     setValue("");
                     setAction("");
-                    updateMyMoney(MY_MONEY - cleanCurrency(value));
+                    setMyMoney(MY_MONEY - cleanCurrency(value));
     
                 } else {
                     const newData = sortedData.map(item => {
@@ -112,11 +112,11 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
                     })
                     toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
     
-                    updateMyAssets(newData);
+                    setMyAssets(newData);
     
                     setValue("");
                     setAction("");
-                    updateMyMoney(MY_MONEY - cleanCurrency(value));
+                    setMyMoney(MY_MONEY - cleanCurrency(value));
     
                 }
             })
@@ -155,12 +155,12 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                                 if (updateAction.amount === 0) {
                                     toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-                                    updateMyMoney(MY_MONEY + currentValueNumber);
+                                    setMyMoney(MY_MONEY + currentValueNumber);
                                     return null;
                                 }
 
                                 toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-                                updateMyMoney(MY_MONEY + currentValueNumber);
+                                setMyMoney(MY_MONEY + currentValueNumber);
                                 return updateAction;
                             }
                         }
@@ -171,7 +171,7 @@ export default function Operations({ MY_MONEY, sortedData, updateMyMoney, update
 
                     const filteredAssets = updatedAssets.filter(item => item !== null);
 
-                    updateMyAssets(filteredAssets);
+                    setMyAssets(filteredAssets);
 
                     setValue("");
                     setAmount("100");
