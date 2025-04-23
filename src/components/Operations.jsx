@@ -56,6 +56,11 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         const numericValue = parseFloat(value.replace(",", "."));
 
         if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
+            const newMoney = MY_MONEY + numericValue;
+
+            console.log("PASSAR PARA API o novo valor do dinheiro total: ",
+                newMoney); // PASSAR PARA API QUANDO FIZER APORTE
+
             setMyMoney(MY_MONEY + numericValue);
             setValue("");
             toast.success(`O aporte de ${formatCurrency(numericValue)} foi realizado com sucesso!`);
@@ -77,6 +82,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                     const acquisitionValue = (cleanCurrency(value));
                     const currentValueNumber = priceNow * amount;
 
+                    const newMoney = MY_MONEY - cleanCurrency(value);
                     const newAction = {
                         id: lastID, //VERIFICAR ID - PROVAVELMENTE REVEMOR ID AQUI
                         name: correctName,
@@ -86,11 +92,20 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                         acquisitionValue: acquisitionValue
                     }
 
-                    console.log("Passar a newAction para API esta:", newAction); //PASSAR O newAction PARA A API
-
                     if (!sortedData.some(item => item.name === correctName)) {
 
-                        console.log("Se não tiver a ação, passar para API esta:", newAction); //PASSAR O newAction PARA A API CASO NÃO EXISTA A AÇÃO
+                        const modelToPass = {
+                            newAction,
+                            newMoney
+                        }
+
+                        console.log("modelToPass: ", modelToPass);
+
+                        console.log("PASSAR PARA API o newAction no caso de não haver ação igual no banco:",
+                            newAction,
+                            "ATUALIZAR o money com: ",
+                            newMoney
+                        ); //PASSAR O newAction PARA A API CASO NÃO EXISTA A AÇÃO e atualizar o money
 
                         toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
 
@@ -103,18 +118,28 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                     } else {
                         const newData = sortedData.map(item => {
                             if (item.name.toUpperCase() === correctName.toUpperCase()) {
-                                const result = {
+                                const existingAction = {
                                     ...item,
                                     amount: Number(item.amount) + Number(amount),
                                     currentValue: (priceNow * (Number(item.amount) + Number(amount))),
                                     acquisitionValue: item.acquisitionValue + Number(cleanCurrency(value))
                                 }
 
-                                console.log("Se já houver a ação, passar este result: ", result); //PASSAR O RESULT PARA A API CASO JÁ EXISTA A AÇÃO
+                                const modelToPass = {
+                                    existingAction,
+                                    newMoney
+                                }
 
-                                return result;
+                                console.log("modelToPass: ", modelToPass);
+
+                                console.log("PASSAR PARA API o existingAction caso já haja ação igual no banco: ",
+                                    existingAction,
+                                    "ATUALIZAR o money com: ",
+                                    newMoney
+                                ); //PASSAR O RESULT PARA A API CASO JÁ EXISTA A AÇÃO e atualizar o money
+
+                                return existingAction;
                             }
-
 
                             return item;
 
@@ -154,6 +179,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
                                 return act;
                             } else {
+                                const newMoney = MY_MONEY + currentValueNumber;
                                 const updateAction = {
                                     ...act,
                                     amount: Number(act.amount) - Number(amount),
@@ -161,7 +187,18 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                     acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
                                 };
 
-                                console.log("Passar essa ação quando a quantidade for reduzida", updateAction); //QUANDO A VENDA DA AÇÃO OCORRER
+                                const modelToPass = {
+                                    updateAction,
+                                    newMoney
+                                }
+        
+                                console.log("modelToPass: ", modelToPass);
+
+                                console.log("PASSAR PARA API o updateAction quando a ação for vendida",
+                                    updateAction,
+                                    "ATUALIZAR o money com: ",
+                                    newMoney
+                                ); //QUANDO A VENDA DA AÇÃO OCORRER e atualizar o money
 
                                 if (updateAction.amount === 0) {
                                     toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
