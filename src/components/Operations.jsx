@@ -6,6 +6,7 @@ import axios from "axios";
 import { getActionFromAPIWhenBuyOrSell } from "../functions/GetActionFromAPIWhenBuyOrSell";
 import { formatCurrency } from "../functions/FormatCurrency";
 import { cleanCurrency } from "../functions/CleanCurrency";
+import { useFrontId } from "../functions/UseFrontId";
 
 export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAssets }) {
 
@@ -15,6 +16,8 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
     const [value, setValue] = useState("");
     const [placeholder, setPlaceholder] = useState("");
     const BRAPI_API = `https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`
+
+    const token = useFrontId();
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
@@ -95,8 +98,9 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                     if (!sortedData.some(item => item.name === correctName)) {
 
                         const modelToPass = {
-                            newAction,
-                            newMoney
+                            frontId: token,
+                            money: newMoney,
+                            assets: newAction
                         }
 
                         console.log("modelToPass: ", modelToPass);
@@ -126,8 +130,9 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                 }
 
                                 const modelToPass = {
-                                    existingAction,
-                                    newMoney
+                                    frontId: token,
+                                    money: newMoney,
+                                    assets: [existingAction]
                                 }
 
                                 console.log("modelToPass: ", modelToPass);
@@ -188,10 +193,11 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                 };
 
                                 const modelToPass = {
-                                    updateAction,
-                                    newMoney
+                                    frontId: token,
+                                    money: newMoney,
+                                    assets: [updateAction],
                                 }
-        
+
                                 console.log("modelToPass: ", modelToPass);
 
                                 console.log("PASSAR PARA API o updateAction quando a ação for vendida",
@@ -214,7 +220,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
                         return act;
 
-                    });
+                    }).filter(asset => asset !== null);
 
                     const filteredAssets = updatedAssets.filter(item => item !== null);
 
