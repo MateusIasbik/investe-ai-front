@@ -1,30 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
 
-export default function Id({ token, setToken }) {
-    const [idCode, setIdCode] = useState("");
-
-    useEffect(() => {
-
-        let storedToken = token;
-        
-            if (!storedToken) {
-              storedToken = localStorage.getItem("token");
-            }
-        
-            if (!storedToken) {
-              storedToken = uuidv4();
-              localStorage.setItem("token", storedToken);
-            }
-            
-            setIdCode(storedToken);
-            setToken(storedToken);
-    }, []);
+export default function Id({ token }) {
 
     return (
         <IdStyled>
-            <h1>Seu id de investidor é: {idCode}</h1>
+            <h1>Seu id de investidor é: {token}</h1>
         </IdStyled>
     )
 }

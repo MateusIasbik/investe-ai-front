@@ -7,12 +7,15 @@ import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
 import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
+import { useFrontId } from "./functions/UseFrontId";
 
 export default function App() {
 
-  const [token, setToken] = useState("");
+  const token = useFrontId();
+
   const [myMoney, setMyMoney] = useState(MY_MONEY);
   const [myAssets, setMyAssets] = useState(MY_ASSETS);
+  const [isLoading, setIsLoading] = useState(true);
 
   const sortedData = [...myAssets].sort((a, b) => {
     if (a.name.toLowerCase() < b.name.toLowerCase()) {
@@ -25,6 +28,34 @@ export default function App() {
   });
 
   useEffect(() => {
+    if (!token) return;
+  
+    const fetchData = async () => {
+      try {
+        // APAGAR O response ABAIXO E COLCOAR O BANCO DE DADOS NO VERDE AINDA LOGO MAIS ABAIXO
+        const response = {
+          data: {
+            money: MY_MONEY,
+            assets: MY_ASSETS,
+          }
+        }
+        // const response = await axios.get(`https://SEU_BACKEND_URL/${token}`); //MUDAR BANCO AQUI
+        const { money, assets } = response.data;
+  
+        setMyMoney(money);
+        setMyAssets(assets);
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    if (!myAssets.length) return;
 
     const fetchAssetPrices = async () => {
 
@@ -46,12 +77,16 @@ export default function App() {
     fetchAssetPrices();
   }, [myMoney]);
 
+  if (isLoading || myMoney === null) {
+    return <h1 style={{ textAlign: "center" }}>Carregando seus dados...</h1>;
+  }
+
   return (
       <ScreenStyled>
         <TopStyled>Investe Aí</TopStyled>
 
         <ContainerStyled>
-            <Id token={token} setToken={setToken}/>
+            <Id token={token} />
           <Balance sortedData={sortedData} MY_MONEY={myMoney} />
           <Operations MY_MONEY={myMoney} sortedData={sortedData} setMyMoney={setMyMoney} setMyAssets={setMyAssets} />
           <Diversification sortedData={sortedData} />
