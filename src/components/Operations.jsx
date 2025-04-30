@@ -137,7 +137,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                     assets: [actionWithoutId]
                                 }
 
-                                console.log("modelToPass de compra é: ", modelToPass);
+
 
                                 await axios.post(INVESTEAI_API, modelToPass);
                                 return existingAction;
@@ -198,7 +198,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                             };
 
                             let { id, userId, ...actionWithoutId } = updateAction;
-                            
+
                             if (newAmount === 0) {
                                 actionWithoutId = {
                                     ...actionWithoutId,
@@ -214,14 +214,12 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                 assets: [actionWithoutId]
                             };
 
-                            console.log("modelToPass de venda é: ", modelToPass);
-
                             await axios.post(INVESTEAI_API, modelToPass);
 
                             return updateAction;
                         }
 
-                        return act; 
+                        return act;
                     });
 
                     const results = await Promise.all(promises);

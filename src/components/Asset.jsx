@@ -3,11 +3,10 @@ import styled from "styled-components";
 import { formatCurrency } from "../functions/FormatCurrency";
 
 export default function Asset({ assetsWithProfitOrLoss }) {
-    
     return (
         <>
             {assetsWithProfitOrLoss.map((asset) => (
-                <BoxStyled key={asset.id}>
+                <BoxStyled key={asset.id || asset.name}>
 
                     <h1>{asset.name}</h1>
 
