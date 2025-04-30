@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import styled from "styled-components";
 import Id from "./components/Id";
 import Balance from "./components/Balance";
 import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
-import { MY_ASSETS, MY_MONEY } from './mock';
+// import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
 import { useFrontId } from "./functions/UseFrontId";
 
@@ -13,35 +13,32 @@ export default function App() {
 
   const token = useFrontId();
 
-  const [myMoney, setMyMoney] = useState(MY_MONEY);
-  const [myAssets, setMyAssets] = useState(MY_ASSETS);
+  const [myMoney, setMyMoney] = useState(0);
+  const [myAssets, setMyAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const sortedData = [...myAssets].sort((a, b) => {
-    if (a.name.toLowerCase() < b.name.toLowerCase()) {
-      return -1;
-    }
-    if (a.name.toLowerCase() > b.name.toLowerCase()) {
-      return 1;
-    }
-    return 0;
-  });
+
+  const sortedData = [...myAssets]
+    .filter(item => item?.name)
+    .sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1;
+      }
+      return 0;
+    });
+
 
   useEffect(() => {
     if (!token) return;
-  
+
     const fetchData = async () => {
       try {
-        // APAGAR O response ABAIXO E COLCOAR O BANCO DE DADOS NO VERDE AINDA LOGO MAIS ABAIXO
-        const response = {
-          data: {
-            money: MY_MONEY,
-            assets: MY_ASSETS,
-          }
-        }
-        // const response = await axios.get(`https://SEU_BACKEND_URL/${token}`); //MUDAR BANCO AQUI
+        const response = await axios.get(`https://invest-ai-back.onrender.com/${token}`);
         const { money, assets } = response.data;
-  
+
         setMyMoney(money);
         setMyAssets(assets);
       } catch (error) {
@@ -50,7 +47,7 @@ export default function App() {
         setIsLoading(false);
       }
     };
-  
+
     fetchData();
   }, [token]);
 
@@ -59,14 +56,16 @@ export default function App() {
 
     const fetchAssetPrices = async () => {
 
-      const updatedAssets = await Promise.all(myAssets.map(async (asset) => {
+      const updatedAssets = await Promise.all(myAssets
+        .filter(asset => asset && typeof asset === 'object' && asset.name)
+        .map(async (asset) => {
         try {
           const response = await axios.get(`https://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`);
           const priceNow = Number(response.data.results[0].regularMarketPrice);
-          const currentNow = Number(priceNow * asset.amount);
+          const currentNow = Number((priceNow * asset.amount).toFixed(2));
           return { ...asset, price: priceNow, currentValue: currentNow };
         } catch (error) {
-          console.error("Erro ao buscar o preço do ativo", asset.name, error);
+          console.error("Erro ao buscar o preço do ativo", error);
           return asset;
         }
       }));
@@ -82,17 +81,17 @@ export default function App() {
   }
 
   return (
-      <ScreenStyled>
-        <TopStyled>Investe Aí</TopStyled>
+    <ScreenStyled>
+      <TopStyled>Investe Aí</TopStyled>
 
-        <ContainerStyled>
-            <Id token={token} />
-          <Balance sortedData={sortedData} MY_MONEY={myMoney} />
-          <Operations MY_MONEY={myMoney} sortedData={sortedData} setMyMoney={setMyMoney} setMyAssets={setMyAssets} />
-          <Diversification sortedData={sortedData} />
-          <Assets sortedData={sortedData} />
-        </ContainerStyled>
-      </ScreenStyled>
+      <ContainerStyled>
+        <Id token={token} />
+        <Balance sortedData={sortedData} MY_MONEY={myMoney} />
+        <Operations MY_MONEY={myMoney} sortedData={sortedData} setMyMoney={setMyMoney} setMyAssets={setMyAssets} />
+        <Diversification sortedData={sortedData} />
+        <Assets sortedData={sortedData} />
+      </ContainerStyled>
+    </ScreenStyled>
   )
 }
 

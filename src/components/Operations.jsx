@@ -16,6 +16,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
     const [value, setValue] = useState("");
     const [placeholder, setPlaceholder] = useState("");
     const BRAPI_API = `https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`
+    const INVESTEAI_API = `https://invest-ai-back.onrender.com/`
 
     const token = useFrontId();
 
@@ -53,7 +54,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
     }, [action, amount, orderType]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const numericValue = parseFloat(value.replace(",", "."));
@@ -61,8 +62,13 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         if (orderType === "Aporte" && numericValue <= 10000 && numericValue > 0) {
             const newMoney = MY_MONEY + numericValue;
 
-            console.log("PASSAR PARA API o novo valor do dinheiro total: ",
-                newMoney); // PASSAR PARA API QUANDO FIZER APORTE
+            const modelToPass = {
+                frontId: token,
+                money: newMoney,
+                assets: []
+            }
+
+            await axios.post(INVESTEAI_API, modelToPass);
 
             setMyMoney(MY_MONEY + numericValue);
             setValue("");
@@ -78,21 +84,21 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
         if (orderType === "Compra" && value && amount && action) {
             axios.get(BRAPI_API)
-                .then((response) => {
-                    const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
+                .then(async (response) => {
+                    // const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
                     const correctName = response.data.results[0].symbol;
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const acquisitionValue = (cleanCurrency(value));
-                    const currentValueNumber = priceNow * amount;
+                    const currentValueNumber = parseFloat((priceNow * amount).toFixed(2));
 
                     const newMoney = MY_MONEY - cleanCurrency(value);
                     const newAction = {
-                        id: lastID, //VERIFICAR ID - PROVAVELMENTE REVEMOR ID AQUI
-                        name: correctName,
-                        price: priceNow,
+                        // id: lastID, //VERIFICAR ID - PROVAVELMENTE REVEMOR ID AQUI
+                        name: String(correctName),
+                        price: Number(priceNow),
                         amount: Number(amount),
-                        currentValue: currentValueNumber,
-                        acquisitionValue: acquisitionValue
+                        currentValue: Number(currentValueNumber),
+                        acquisitionValue: Number(acquisitionValue)
                     }
 
                     if (!sortedData.some(item => item.name === correctName)) {
@@ -100,16 +106,10 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                         const modelToPass = {
                             frontId: token,
                             money: newMoney,
-                            assets: newAction
+                            assets: [newAction]
                         }
 
-                        console.log("modelToPass: ", modelToPass);
-
-                        console.log("PASSAR PARA API o newAction no caso de não haver ação igual no banco:",
-                            newAction,
-                            "ATUALIZAR o money com: ",
-                            newMoney
-                        ); //PASSAR O newAction PARA A API CASO NÃO EXISTA A AÇÃO e atualizar o money
+                        await axios.post(INVESTEAI_API, modelToPass);
 
                         toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
 
@@ -120,35 +120,33 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                         setMyMoney(MY_MONEY - cleanCurrency(value));
 
                     } else {
-                        const newData = sortedData.map(item => {
+                        const newData = await Promise.all(sortedData.map(async item => {
                             if (item.name.toUpperCase() === correctName.toUpperCase()) {
                                 const existingAction = {
                                     ...item,
                                     amount: Number(item.amount) + Number(amount),
-                                    currentValue: (priceNow * (Number(item.amount) + Number(amount))),
+                                    currentValue: Number((priceNow * (Number(item.amount) + Number(amount))).toFixed(2)),
                                     acquisitionValue: item.acquisitionValue + Number(cleanCurrency(value))
                                 }
+
+                                const { id, userId, ...actionWithoutId } = existingAction;
 
                                 const modelToPass = {
                                     frontId: token,
                                     money: newMoney,
-                                    assets: [existingAction]
+                                    assets: [actionWithoutId]
                                 }
 
-                                console.log("modelToPass: ", modelToPass);
+                                console.log("modelToPass de compra é: ", modelToPass);
 
-                                console.log("PASSAR PARA API o existingAction caso já haja ação igual no banco: ",
-                                    existingAction,
-                                    "ATUALIZAR o money com: ",
-                                    newMoney
-                                ); //PASSAR O RESULT PARA A API CASO JÁ EXISTA A AÇÃO e atualizar o money
-
+                                await axios.post(INVESTEAI_API, modelToPass);
                                 return existingAction;
                             }
 
                             return item;
 
-                        })
+                        }));
+
                         toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
 
                         setMyAssets(newData);
@@ -167,74 +165,83 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
         if (orderType === "Venda" && value && amount && action) {
             axios.get(BRAPI_API)
-                .then((response) => {
+                .then(async (response) => {
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const currentValueNumber = priceNow * amount;
 
-                    const actionExists = sortedData.some(act => act.name.toUpperCase() === action.toUpperCase());
+                    const actionExists = sortedData.some(
+                        act => act.name.toUpperCase() === action.toUpperCase()
+                    );
+
                     if (!actionExists) {
                         toast.error(`Você não possui ativos de ${action.toUpperCase()} para venda.`);
                         return;
                     }
 
-                    const updatedAssets = sortedData.map(act => {
+                    const promises = sortedData.map(async act => {
                         if (act.name.toUpperCase() === action.toUpperCase()) {
-
                             if (Number(act.amount) < Number(amount)) {
                                 toast.error(`A quantidade máxima de ações que você pode vender é de ${act.amount}`);
                                 return act;
-                            } else {
-                                const newMoney = MY_MONEY + currentValueNumber;
-                                const updateAction = {
-                                    ...act,
-                                    amount: Number(act.amount) - Number(amount),
-                                    currentValue: priceNow * (Number(act.amount) - Number(amount)),
-                                    acquisitionValue: (act.acquisitionValue / act.amount) * (act.amount - Number(amount))
-                                };
-
-                                const modelToPass = {
-                                    frontId: token,
-                                    money: newMoney,
-                                    assets: [updateAction],
-                                }
-
-                                console.log("modelToPass: ", modelToPass);
-
-                                console.log("PASSAR PARA API o updateAction quando a ação for vendida",
-                                    updateAction,
-                                    "ATUALIZAR o money com: ",
-                                    newMoney
-                                ); //QUANDO A VENDA DA AÇÃO OCORRER e atualizar o money
-
-                                if (updateAction.amount === 0) {
-                                    toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-                                    setMyMoney(MY_MONEY + currentValueNumber);
-                                    return null;
-                                }
-
-                                toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
-                                setMyMoney(MY_MONEY + currentValueNumber);
-                                return updateAction;
                             }
+
+                            const newAmount = Number(act.amount) - Number(amount);
+                            const newMoney = Number(MY_MONEY + currentValueNumber);
+
+                            const updateAction = {
+                                ...act,
+                                amount: Number(newAmount),
+                                currentValue: Number((priceNow * newAmount).toFixed(2)),
+                                acquisitionValue: Number(newAmount > 0
+                                    ? Number(((act.acquisitionValue / act.amount) * newAmount).toFixed(2))
+                                    : 0)
+                            };
+
+                            let { id, userId, ...actionWithoutId } = updateAction;
+                            
+                            if (newAmount === 0) {
+                                actionWithoutId = {
+                                    ...actionWithoutId,
+                                    amount: 0,
+                                    currentValue: 1,
+                                    acquisitionValue: 1
+                                };
+                            }
+
+                            const modelToPass = {
+                                frontId: token,
+                                money: newMoney,
+                                assets: [actionWithoutId]
+                            };
+
+                            console.log("modelToPass de venda é: ", modelToPass);
+
+                            await axios.post(INVESTEAI_API, modelToPass);
+
+                            return updateAction;
                         }
 
-                        return act;
+                        return act; 
+                    });
 
-                    }).filter(asset => asset !== null);
+                    const results = await Promise.all(promises);
 
-                    const filteredAssets = updatedAssets.filter(item => item !== null);
+                    toast.success(`A venda de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
+                    setMyMoney(Number(MY_MONEY + currentValueNumber));
 
+                    const filteredAssets = results.filter(asset => asset.amount > 0);
                     setMyAssets(filteredAssets);
 
                     setValue("");
                     setAmount("100");
                     setAction("");
                 })
-
                 .catch((error) => {
                     console.error("Erro ao buscar o banco de dados!", error);
+                    toast.error("Erro ao realizar a venda. Tente novamente.");
                 });
         }
+
 
     };
 
