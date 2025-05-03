@@ -5,7 +5,6 @@ import Balance from "./components/Balance";
 import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
-// import { MY_ASSETS, MY_MONEY } from './mock';
 import axios from "axios";
 import { useFrontId } from "./functions/UseFrontId";
 
@@ -77,7 +76,14 @@ export default function App() {
   }, [myMoney]);
 
   if (isLoading || myMoney === null) {
-    return <h1 style={{ textAlign: "center" }}>Carregando seus dados...</h1>;
+    return (
+      <LoadingContainer>
+        <img
+          src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHRyc2xtdzZsZXR4eHE4eWViMmc1NHphOW5iMXFsaXA5bzF5cGg5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEjI6SIIHBdRxXI40/giphy.gif"
+          alt="Carregando seus dados..."
+          />
+      </LoadingContainer>
+    );
   }
 
   return (
@@ -94,6 +100,18 @@ export default function App() {
     </ScreenStyled>
   )
 }
+
+const LoadingContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  color: #000;
+  background-color: #fff;
+`;
 
 const ScreenStyled = styled.div`
   width: 100%;
@@ -154,3 +172,4 @@ const ContainerStyled = styled.div`
     margin: 0;
   }
 `;
+
