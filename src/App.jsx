@@ -107,10 +107,8 @@ const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
   font-size: 24px;
-  color: #000;
-  background-color: #fff;
+  margin-top: -70px;
 `;
 
 const ScreenStyled = styled.div`
