@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
 import { getActionFromAPIWhenBuyOrSell } from "../functions/GetActionFromAPIWhenBuyOrSell";
 import { formatCurrency } from "../functions/FormatCurrency";
 import { cleanCurrency } from "../functions/CleanCurrency";
 import { useFrontId } from "../functions/UseFrontId";
-import api from "./api";
+import api from "../api";
 
 export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAssets }) {
 
@@ -82,7 +83,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         }
 
         if (orderType === "Compra" && value && amount && action) {
-            api.get(BRAPI_API)
+            axios.get(BRAPI_API)
                 .then(async (response) => {
                     // const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
                     const correctName = response.data.results[0].symbol;
@@ -163,7 +164,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         }
 
         if (orderType === "Venda" && value && amount && action) {
-            api.get(BRAPI_API)
+            axios.get(BRAPI_API)
                 .then(async (response) => {
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const currentValueNumber = priceNow * amount;
