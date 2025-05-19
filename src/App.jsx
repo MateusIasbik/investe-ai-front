@@ -15,20 +15,36 @@ export default function App() {
   const [myMoney, setMyMoney] = useState(0);
   const [myAssets, setMyAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sortCriteria, setSortCriteria] = useState("nome");
 
+  // const sortedData = [...myAssets]
+  //   .filter(item => item?.name)
+  //   .sort((a, b) => {
+  //     if (a.name.toLowerCase() < b.name.toLowerCase()) {
+  //       return -1;
+  //     }
+  //     if (a.name.toLowerCase() > b.name.toLowerCase()) {
+  //       return 1;
+  //     }
+  //     return 0;
+  //   });
 
   const sortedData = [...myAssets]
-    .filter(item => item?.name)
-    .sort((a, b) => {
-      if (a.name.toLowerCase() < b.name.toLowerCase()) {
-        return -1;
-      }
-      if (a.name.toLowerCase() > b.name.toLowerCase()) {
-        return 1;
-      }
-      return 0;
-    });
-
+  .filter(item => item?.name)
+  .sort((a, b) => {
+    switch (sortCriteria) {
+      case "nome":
+        return a.name.localeCompare(b.name);
+      case "valorInvestido":
+        return b.acquisitionValue - a.acquisitionValue;
+      case "lucro":
+        const lucroA = a.currentValue - a.acquisitionValue;
+        const lucroB = b.currentValue - b.acquisitionValue;
+        return lucroB - lucroA;
+      default:
+        return 0;
+    }
+  });
 
   useEffect(() => {
     if (!token) return;

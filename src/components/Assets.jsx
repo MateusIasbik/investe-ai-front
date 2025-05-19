@@ -18,12 +18,40 @@ export default function Assets({ sortedData }) {
     return (
         <>
             <TitleStyled>Ativos</TitleStyled>
+            <SortControls>
+                <label htmlFor="sort">Ordenar por:</label>
+                <select
+                    id="sort"
+                    value={sortCriteria}
+                    onChange={(e) => setSortCriteria(e.target.value)}
+                >
+                    <option value="nome">Nome da Ação (A-Z)</option>
+                    <option value="valorInvestido">Valor Investido</option>
+                    <option value="lucro">Lucro</option>
+                </select>
+            </SortControls>
+
             <AssetsStyled>
                 <Asset assetsWithProfitOrLoss={assetsWithProfitOrLoss} />
             </AssetsStyled>
         </>
     )
 }
+
+const SortControls = styled.div`
+  margin: 20px 0;
+  font-family: 'Roboto', sans-serif;
+
+  label {
+    margin-right: 10px;
+    font-size: 16px;
+  }
+
+  select {
+    font-size: 16px;
+    padding: 5px 10px;
+  }
+`;
 
 const TitleStyled = styled.h1`
     border-top: 1px solid #DEDEDF;
