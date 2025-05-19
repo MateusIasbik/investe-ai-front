@@ -1,12 +1,12 @@
-import React, { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Id from "./components/Id";
 import Balance from "./components/Balance";
 import Operations from "./components/Operations";
 import Diversification from "./components/Diversification";
 import Assets from "./components/Assets";
-import axios from "axios";
 import { useFrontId } from "./functions/UseFrontId";
+import api from "./api";
 
 export default function App() {
 
@@ -35,7 +35,7 @@ export default function App() {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://invest-ai-back.onrender.com/${token}`);
+        const response = await api.get(`/${token}`);
         const { money, assets } = response.data;
 
         setMyMoney(money);
@@ -59,7 +59,7 @@ export default function App() {
         .filter(asset => asset && typeof asset === 'object' && asset.name)
         .map(async (asset) => {
         try {
-          const response = await axios.get(`https://brapi.com.br/api/quote/${asset.name}?token=gzt1E342VQo1gcijzdazAF`);
+          const response = await api.get(`/${asset.name}?token=gzt1E342VQo1gcijzdazAF`);
           const priceNow = Number(response.data.results[0].regularMarketPrice);
           const currentNow = Number((priceNow * asset.amount).toFixed(2));
           return { ...asset, price: priceNow, currentValue: currentNow };

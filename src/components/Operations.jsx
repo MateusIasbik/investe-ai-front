@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
 import { getActionFromAPIWhenBuyOrSell } from "../functions/GetActionFromAPIWhenBuyOrSell";
 import { formatCurrency } from "../functions/FormatCurrency";
 import { cleanCurrency } from "../functions/CleanCurrency";
 import { useFrontId } from "../functions/UseFrontId";
+import api from "./api";
 
 export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAssets }) {
 
@@ -16,7 +16,6 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
     const [value, setValue] = useState("");
     const [placeholder, setPlaceholder] = useState("");
     const BRAPI_API = `https://brapi.com.br/api/quote/${action}?token=gzt1E342VQo1gcijzdazAF`
-    const INVESTEAI_API = `https://invest-ai-back.onrender.com/`
 
     const token = useFrontId();
 
@@ -68,7 +67,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                 assets: []
             }
 
-            await axios.post(INVESTEAI_API, modelToPass);
+            await api.post("/", modelToPass);
 
             setMyMoney(MY_MONEY + numericValue);
             setValue("");
@@ -83,7 +82,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         }
 
         if (orderType === "Compra" && value && amount && action) {
-            axios.get(BRAPI_API)
+            api.get(BRAPI_API)
                 .then(async (response) => {
                     // const lastID = (sortedData.length === 0) ? 1 : sortedData[sortedData.length - 1].id + 1; // MUDAR ISTO, PEGAR ID DO BANCO CRIADO AUTOMATICAMENTE
                     const correctName = response.data.results[0].symbol;
@@ -109,7 +108,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                             assets: [newAction]
                         }
 
-                        await axios.post(INVESTEAI_API, modelToPass);
+                        await api.post("/", modelToPass);
 
                         toast.success(`A compra de ${amount} ações de ${action.toUpperCase()} foi realizada com sucesso!`);
 
@@ -139,7 +138,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
 
 
 
-                                await axios.post(INVESTEAI_API, modelToPass);
+                                await api.post("/", modelToPass);
                                 return existingAction;
                             }
 
@@ -164,7 +163,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
         }
 
         if (orderType === "Venda" && value && amount && action) {
-            axios.get(BRAPI_API)
+            api.get(BRAPI_API)
                 .then(async (response) => {
                     const priceNow = Number(response.data.results[0].regularMarketPrice);
                     const currentValueNumber = priceNow * amount;
@@ -214,7 +213,7 @@ export default function Operations({ MY_MONEY, sortedData, setMyMoney, setMyAsse
                                 assets: [actionWithoutId]
                             };
 
-                            await axios.post(INVESTEAI_API, modelToPass);
+                            await api.post("/", modelToPass);
 
                             return updateAction;
                         }
