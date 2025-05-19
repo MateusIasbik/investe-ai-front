@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Asset from "../components/Asset";
 
-export default function Assets({ sortedData }) {
+export default function Assets({ sortedData, sortCriteria, setSortCriteria }) {
 
     const assetsWithProfitOrLoss = sortedData.map((asset) => {
         const resultProfitOrLoss = asset.currentValue - asset.acquisitionValue;

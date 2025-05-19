@@ -111,7 +111,7 @@ export default function App() {
         <Balance sortedData={sortedData} MY_MONEY={myMoney} />
         <Operations MY_MONEY={myMoney} sortedData={sortedData} setMyMoney={setMyMoney} setMyAssets={setMyAssets} />
         <Diversification sortedData={sortedData} />
-        <Assets sortedData={sortedData} />
+        <Assets sortedData={sortedData} sortCriteria={sortCriteria} setSortCriteria={setSortCriteria} />
       </ContainerStyled>
     </ScreenStyled>
   )
