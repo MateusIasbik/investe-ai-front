@@ -17,18 +17,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [sortCriteria, setSortCriteria] = useState("nome");
 
-  // const sortedData = [...myAssets]
-  //   .filter(item => item?.name)
-  //   .sort((a, b) => {
-  //     if (a.name.toLowerCase() < b.name.toLowerCase()) {
-  //       return -1;
-  //     }
-  //     if (a.name.toLowerCase() > b.name.toLowerCase()) {
-  //       return 1;
-  //     }
-  //     return 0;
-  //   });
-
   const sortedData = [...myAssets]
   .filter(item => item?.name)
   .sort((a, b) => {
