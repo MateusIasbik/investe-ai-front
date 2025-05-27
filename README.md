@@ -54,9 +54,9 @@ REACT_APP_API_URL: Defina a URL da API (por padrão, para rodar localmente, ser�
 
 #### 4. Para iniciar o servidor de desenvolvimento, execute o seguinte comando:
 
-npm start
+npm run dev
 
- - A aplicação estará disponível em: http://localhost:3000
+ - A aplicação estará disponível em: http://localhost:3000 (ou a porta definida pelo Vite)
 
 ---
 
