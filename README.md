@@ -11,7 +11,8 @@ Example:
 https://investe-ai-front.vercel.app/ID
 (Replace ID with your actual investor ID)
 
-Obs.: O projeto foi feito de modo privado, depois de finalizado abri para público. Com isso o arquivo .env foi commitado algumas vezes antes de inserir no .gitignore. Como o arquivo .env não possui dados relevantes, não eliminei estes dados dos commits anteriores.
+**Note:** This project was initially developed in a private repository and later made public. As a result, the `.env` file was committed a few times before it was added to `.gitignore`. Since the `.env` file does not contain any sensitive or relevant data, it was not removed from the previous commits.
+
 
 ## 🛠️ Tecnologias Utilizadas
 - React
