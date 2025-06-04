@@ -11,6 +11,8 @@ Example:
 https://investe-ai-front.vercel.app/ID
 (Replace ID with your actual investor ID)
 
+Obs.: O projeto foi feito de modo privado, depois de finalizado abri para público. Com isso o arquivo .env foi commitado algumas vezes antes de inserir no .gitignore. Como o arquivo .env não possui dados relevantes, não eliminei estes dados dos commits anteriores.
+
 ## 🛠️ Tecnologias Utilizadas
 - React
 - Axios (requisições HTTP)
